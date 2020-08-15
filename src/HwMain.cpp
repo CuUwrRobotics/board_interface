@@ -756,6 +756,33 @@ void readCommands(int argc, char *argv[]) {
 			"Using BIT tests. WARNING: DISCONNECT ALL HARDWARE FROM THE BOARD BEFORE PROCEDING!");
 } // readCommands
 
+void enterLoop() {
+	// Connect ROS
+	printf("Starting up ROS.\n");
+	// Start ROS and get the node instance
+	ros::init(argc, argv, "board_interface");
+	ros::NodeHandle nd;
+	// Print the node name
+	std::string nodeName = ros::this_node::getName();
+	printf("Node name: %s\n", nodeName.c_str());
+
+	// Set up the message publishers
+	ros::Publisher gpio_publisher[3];
+	gpio_publisher[0] = nd.advertise <board_interface::gpio> ("gpio_0", 0);
+	// Allows for a 1 second delay between messages
+	ros::Duration loop_wait(1);
+	// For storing pets
+	board_interface::gpio gpio_msg[3];
+	// msg.petterName = nodeName; // Pack data
+	while (ros::ok()) {
+		// Pet the dog
+		gpio_msg[0].header.stamp = ros::Time::now();
+		gpio_publisher[0].publish(gpio_msg[0]);
+		// Wait 1 second
+		loop_wait.sleep();
+	}
+} // enterLoop
+
 int main(int argc, char *argv[]){
 	atexit(hardwareExit);
 
@@ -768,29 +795,9 @@ int main(int argc, char *argv[]){
 	dumpConfiguration(); // False for full pin listing
 	// bit_testing::dumpConfiguration(true, &interfaces, &devices); // False for full pin listing
 	startupConfig();
-	if (use_bit_test) // If the argument to ensable BIT tests was passed, run them
-		runBitTest(); // Test interfaces
+	// if (use_bit_test) // If the argument to ensable BIT tests was passed, run them
+	// 	runBitTest(); // Test interfaces
 
-	// Connect ROS
-	printf("Starting up ROS.\n");
-	// Start ROS and get the node instance
-	ros::init(argc, argv, "board_interface");
-	ros::NodeHandle nd;
-	// Print the node name
-	std::string nodeName = ros::this_node::getName();
-	printf("Node name: %s\n", nodeName.c_str());
-	// Set up the message publisher
-	// ros::Publisher wd_petter =
-	// 	nd.advertise <watchdog::pet_dog_msg> ("pet_dog_msg", 1000);
-	// Allows for a 1 second delay between messages
-	ros::Duration loop_wait(1);
-	// For storing pets
-	// watchdog::pet_dog_msg msg;
-	// msg.petterName = nodeName; // Pack data
-	// while (ros::ok()) {
-	// 	// Pet the dog
-	// 	// wd_petter.publish(msg);
-	// 	// Wait 1 second
-	// 	loop_wait.sleep();
-	// }
+	// Startup complete; start looping
+	enterLoop();
 } // main

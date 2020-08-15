@@ -18,6 +18,7 @@ using namespace std;
 #include <map> // Mot used here, but necesary for the maps
 #include <utility> // TODO: do we need this?
 #include "Indexer.h"
+#include "HardwareMessages.h"
 
 // If incompatible enums are compared, an error will be thrown instead of a warning.
 #pragma GCC diagnostic error "-Wenum-compare"
