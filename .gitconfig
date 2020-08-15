@@ -1,0 +1,2 @@
+# Shell file line endings cannot have cr
+*.sh text eol=lf
