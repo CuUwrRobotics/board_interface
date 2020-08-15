@@ -331,78 +331,78 @@ void createAndInitInterfaces(){
  */
 
 void runBitTest(){
-	// run built in testing
-	bool testsOk = true;
-	Interface_Indexer_t intf; // Stores device type and index for map array
-	Device_Indexer_t dev; // Stores device type and index for map array
-
-	// Run the tests and flag if one fails, since they dump a LOT of data.
-	// PWM testing
-	// ===========
-	intf = Interface_Indexer_t(INTF_PWM, 6);
-	dev = Device_Indexer_t(DEVICE_PWM, 3);
-	if (!bit_testing::testPwm(interfaces[intf], devices[dev], true)) testsOk =
-			false;
-	if (!bit_testing::testPwm(interfaces[intf], devices[dev], false)) testsOk =
-			false;
-	intf = Interface_Indexer_t(INTF_PWM, 7);
-	dev = Device_Indexer_t(DEVICE_PWM, 4);
-	if (!bit_testing::testPwm(interfaces[intf], devices[dev], true)) testsOk =
-			false;
-	if (!bit_testing::testPwm(interfaces[intf], devices[dev], false)) testsOk =
-			false;
-
-	// GPIO testing
-	// ===========
-	intf = Interface_Indexer_t(INTF_GPIO, 0);
-	dev = Device_Indexer_t(DEVICE_GPIO, 1);
-	if (!bit_testing::testGpio(interfaces[intf], devices[dev])) testsOk = false;
-	intf = Interface_Indexer_t(INTF_GPIO, 1);
-	dev = Device_Indexer_t(DEVICE_GPIO, 1);
-	if (!bit_testing::testGpio(interfaces[intf], devices[dev])) testsOk = false;
-
-	// POWER testing
-	// ===========
-	intf = Interface_Indexer_t(INTF_PWR_SWITCHING, 3);
-	dev = Device_Indexer_t(DEVICE_GPIO, 2);
-	if (!bit_testing::testPower(interfaces[intf], devices[dev])) testsOk = false;
-
-	// LEAK testing
-	// ===========
-	intf = Interface_Indexer_t(INTF_LEAK, 2);
-	dev = Device_Indexer_t(DEVICE_GPIO, 2);
-	if (!bit_testing::testLeak(interfaces[intf], devices[dev])) testsOk = false;
-
-	// EMERG_IO testing
-	// ================
-	intf = Interface_Indexer_t(INTF_EMERGENCY_IO, 4);
-	dev = Device_Indexer_t(DEVICE_ADC, 2);
-	if (!bit_testing::testEmergencyIo(interfaces[intf], devices[dev])) testsOk =
-			false;
-
-	// LEAK_LED testing
-	// ================
-	intf = Interface_Indexer_t(INTF_LED, 5);
-	dev = Device_Indexer_t(DEVICE_GPIO, 2);
-	if (!bit_testing::testLed(interfaces[intf], devices[dev])) testsOk = false;
-
-	// ADC testing
-	// ================
-	intf = Interface_Indexer_t(INTF_ADC, 8);
-	dev = Device_Indexer_t(DEVICE_ADC, 5);
-	if (!bit_testing::testAdc(interfaces[intf], devices[dev])) testsOk = false;
-	intf = Interface_Indexer_t(INTF_ADC, 9);
-	dev = Device_Indexer_t(DEVICE_ADC, 6);
-	if (!bit_testing::testAdc(interfaces[intf], devices[dev])) testsOk = false;
-
-	// All tests done
-	if (!testsOk) {
-		printf(
-			"%sWARINING: AT LEAST ONE BIT TEST HAS FAILED. Read the data above to find the reason.%s\n",
-			RED, NO_COLOR);
-	}	else {
-		printf("%sAll BIT tests good :)%s\n", GREEN, NO_COLOR);
-	}
+	// // run built in testing
+	// bool testsOk = true;
+	// Interface_Indexer_t intf; // Stores device type and index for map array
+	// Device_Indexer_t dev; // Stores device type and index for map array
+  //
+	// // Run the tests and flag if one fails, since they dump a LOT of data.
+	// // PWM testing
+	// // ===========
+	// intf = Interface_Indexer_t(INTF_PWM, 6);
+	// dev = Device_Indexer_t(DEVICE_PWM, 3);
+	// if (!bit_testing::testPwm(interfaces[intf], devices[dev], true)) testsOk =
+	// 		false;
+	// if (!bit_testing::testPwm(interfaces[intf], devices[dev], false)) testsOk =
+	// 		false;
+	// intf = Interface_Indexer_t(INTF_PWM, 7);
+	// dev = Device_Indexer_t(DEVICE_PWM, 4);
+	// if (!bit_testing::testPwm(interfaces[intf], devices[dev], true)) testsOk =
+	// 		false;
+	// if (!bit_testing::testPwm(interfaces[intf], devices[dev], false)) testsOk =
+	// 		false;
+  //
+	// // GPIO testing
+	// // ===========
+	// intf = Interface_Indexer_t(INTF_GPIO, 0);
+	// dev = Device_Indexer_t(DEVICE_GPIO, 1);
+	// if (!bit_testing::testGpio(interfaces[intf], devices[dev])) testsOk = false;
+	// intf = Interface_Indexer_t(INTF_GPIO, 1);
+	// dev = Device_Indexer_t(DEVICE_GPIO, 1);
+	// if (!bit_testing::testGpio(interfaces[intf], devices[dev])) testsOk = false;
+  //
+	// // POWER testing
+	// // ===========
+	// intf = Interface_Indexer_t(INTF_PWR_SWITCHING, 3);
+	// dev = Device_Indexer_t(DEVICE_GPIO, 2);
+	// if (!bit_testing::testPower(interfaces[intf], devices[dev])) testsOk = false;
+  //
+	// // LEAK testing
+	// // ===========
+	// intf = Interface_Indexer_t(INTF_LEAK, 2);
+	// dev = Device_Indexer_t(DEVICE_GPIO, 2);
+	// if (!bit_testing::testLeak(interfaces[intf], devices[dev])) testsOk = false;
+  //
+	// // EMERG_IO testing
+	// // ================
+	// intf = Interface_Indexer_t(INTF_EMERGENCY_IO, 4);
+	// dev = Device_Indexer_t(DEVICE_ADC, 2);
+	// if (!bit_testing::testEmergencyIo(interfaces[intf], devices[dev])) testsOk =
+	// 		false;
+  //
+	// // LEAK_LED testing
+	// // ================
+	// intf = Interface_Indexer_t(INTF_LED, 5);
+	// dev = Device_Indexer_t(DEVICE_GPIO, 2);
+	// if (!bit_testing::testLed(interfaces[intf], devices[dev])) testsOk = false;
+  //
+	// // ADC testing
+	// // ================
+	// intf = Interface_Indexer_t(INTF_ADC, 8);
+	// dev = Device_Indexer_t(DEVICE_ADC, 5);
+	// if (!bit_testing::testAdc(interfaces[intf], devices[dev])) testsOk = false;
+	// intf = Interface_Indexer_t(INTF_ADC, 9);
+	// dev = Device_Indexer_t(DEVICE_ADC, 6);
+	// if (!bit_testing::testAdc(interfaces[intf], devices[dev])) testsOk = false;
+  //
+	// // All tests done
+	// if (!testsOk) {
+	// 	printf(
+	// 		"%sWARINING: AT LEAST ONE BIT TEST HAS FAILED. Read the data above to find the reason.%s\n",
+	// 		RED, NO_COLOR);
+	// }	else {
+	// 	printf("%sAll BIT tests good :)%s\n", GREEN, NO_COLOR);
+	// }
 } // runBitTest
 
 /**
