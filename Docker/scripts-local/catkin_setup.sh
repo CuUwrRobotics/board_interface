@@ -10,9 +10,9 @@ source /opt/ros/melodic/setup.sh
 catkin_make clean >> /dev/null
 
 
-echo Cloning watchdog into workspace...
-cd src
-git clone --branch master https://github.com/CuUwrRobotics/watchdog
+# echo Cloning watchdog into workspace...
+# cd src
+# git clone --branch master https://github.com/CuUwrRobotics/watchdog
 
 echo Cleaning workspace...
 cd catkin_ws

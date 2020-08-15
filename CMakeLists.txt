@@ -10,7 +10,7 @@ project(board_interface)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   # std_msgs
-  watchdog
+  # watchdog
 )
 
 ## System dependencies are found with CMake's conventions
@@ -108,7 +108,7 @@ catkin_package(
  CATKIN_DEPENDS
  roscpp
  # std_msgs
- watchdog
+ # watchdog
 #  DEPENDS system_lib
 )
 

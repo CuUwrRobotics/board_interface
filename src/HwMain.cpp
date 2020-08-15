@@ -335,7 +335,7 @@ void runBitTest(){
 	// bool testsOk = true;
 	// Interface_Indexer_t intf; // Stores device type and index for map array
 	// Device_Indexer_t dev; // Stores device type and index for map array
-  //
+	//
 	// // Run the tests and flag if one fails, since they dump a LOT of data.
 	// // PWM testing
 	// // ===========
@@ -351,7 +351,7 @@ void runBitTest(){
 	// 		false;
 	// if (!bit_testing::testPwm(interfaces[intf], devices[dev], false)) testsOk =
 	// 		false;
-  //
+	//
 	// // GPIO testing
 	// // ===========
 	// intf = Interface_Indexer_t(INTF_GPIO, 0);
@@ -360,32 +360,32 @@ void runBitTest(){
 	// intf = Interface_Indexer_t(INTF_GPIO, 1);
 	// dev = Device_Indexer_t(DEVICE_GPIO, 1);
 	// if (!bit_testing::testGpio(interfaces[intf], devices[dev])) testsOk = false;
-  //
+	//
 	// // POWER testing
 	// // ===========
 	// intf = Interface_Indexer_t(INTF_PWR_SWITCHING, 3);
 	// dev = Device_Indexer_t(DEVICE_GPIO, 2);
 	// if (!bit_testing::testPower(interfaces[intf], devices[dev])) testsOk = false;
-  //
+	//
 	// // LEAK testing
 	// // ===========
 	// intf = Interface_Indexer_t(INTF_LEAK, 2);
 	// dev = Device_Indexer_t(DEVICE_GPIO, 2);
 	// if (!bit_testing::testLeak(interfaces[intf], devices[dev])) testsOk = false;
-  //
+	//
 	// // EMERG_IO testing
 	// // ================
 	// intf = Interface_Indexer_t(INTF_EMERGENCY_IO, 4);
 	// dev = Device_Indexer_t(DEVICE_ADC, 2);
 	// if (!bit_testing::testEmergencyIo(interfaces[intf], devices[dev])) testsOk =
 	// 		false;
-  //
+	//
 	// // LEAK_LED testing
 	// // ================
 	// intf = Interface_Indexer_t(INTF_LED, 5);
 	// dev = Device_Indexer_t(DEVICE_GPIO, 2);
 	// if (!bit_testing::testLed(interfaces[intf], devices[dev])) testsOk = false;
-  //
+	//
 	// // ADC testing
 	// // ================
 	// intf = Interface_Indexer_t(INTF_ADC, 8);
@@ -394,7 +394,7 @@ void runBitTest(){
 	// intf = Interface_Indexer_t(INTF_ADC, 9);
 	// dev = Device_Indexer_t(DEVICE_ADC, 6);
 	// if (!bit_testing::testAdc(interfaces[intf], devices[dev])) testsOk = false;
-  //
+	//
 	// // All tests done
 	// if (!testsOk) {
 	// 	printf(
@@ -770,81 +770,27 @@ int main(int argc, char *argv[]){
 	startupConfig();
 	if (use_bit_test) // If the argument to ensable BIT tests was passed, run them
 		runBitTest(); // Test interfaces
-// #undefine DUMP_CURRENT_READS
-#ifdef DUMP_CURRENT_READS
-	float *currentIn;
-	printf("CURRENT DUMP: CURRENT 0\n");
-	printf("\tPin %d:\t%s%.0f%s", 0, WHITE,
-	       *interfaces[10]->readPin(0, VALUE_ADC_DIRECT), NO_COLOR);
-	currentIn = interfaces[10]->readPin(0, VALUE_CURRENT_AMPS_WITH_TOLERANCE);
-	printf("\t%s%.2f%sA\t±%s%.2f%sA\n",
-	       WHITE, currentIn[0], NO_COLOR,
-	       WHITE, currentIn[1], NO_COLOR);
 
-	printf("CURRENT DUMP: CURRENT 1\n");
-	printf("\tPin %d:\t%s%.0f%s", 0, WHITE,
-	       *interfaces[11]->readPin(0, VALUE_ADC_DIRECT), NO_COLOR);
-	currentIn = interfaces[11]->readPin(0, VALUE_CURRENT_AMPS_WITH_TOLERANCE);
-	printf("\t%s%.2f%sA\t±%s%.2f%sA\n",
-	       WHITE, currentIn[0], NO_COLOR,
-	       WHITE, currentIn[1], NO_COLOR);
-
-	printf("TEMP DUMP: TEMP 0\n");
-	printf("\tPin %d:\t%s%.0f%s\t%s%.2f%sV", 0,
-	       WHITE, *interfaces[13]->readPin(0, VALUE_ADC_DIRECT), NO_COLOR,
-	       WHITE, *interfaces[13]->readPin(0, VALUE_ADC_VOLTAGE), NO_COLOR);
-	currentIn = interfaces[13]->readPin(0, VALUE_TEMP_C_WITH_TOLERANCE);
-	printf("\t%s%5.2f%s'C\t±%s%.2f%s'C\n",
-	       WHITE, currentIn[0], NO_COLOR,
-	       WHITE, currentIn[1], NO_COLOR);
-
-	printf("POWER LINE DUMP:\n");
-	for (uint8_t i = 14; i < 18; i++) {
-		currentIn = interfaces[i]->readPin(0, VALUE_ADC_VOLTAGE_WITH_TOLERANCE);
-		printf("\tPL #%s%d%s:\t%s%5.2f%sV\t±%s%5.2f%sV\n",
-		       WHITE, i, NO_COLOR,
-		       WHITE,
-		       currentIn[0],
-		       NO_COLOR,
-		       WHITE,
-		       currentIn[1],
-		       NO_COLOR);
-	}
-
-	printf("ADC DUMP: ADC 0\n");
-	float *voltagesIn;
-	// float *data;
-	for (int pin = 0; pin < interfaces[8]->getPinCount(); pin++) {
-		printf("\tPin %d:\t%s%.0f%s", pin, WHITE,
-		       *interfaces[8]->readPin(pin, VALUE_ADC_DIRECT), NO_COLOR);
-		voltagesIn = interfaces[8]->readPin(pin,
-		                                    VALUE_ADC_VOLTAGE_WITH_TOLERANCE);
-		printf("\t%s%.2f%sV\t±%s%.2f%sV\n",
-		       WHITE, voltagesIn[0], NO_COLOR,
-		       WHITE, voltagesIn[1], NO_COLOR);
-	}
-	printf("\n");
-#endif // ifdef DUMP_CURRENT_READS
 	// Connect ROS
 	printf("Starting up ROS.\n");
 	// Start ROS and get the node instance
 	ros::init(argc, argv, "board_interface");
 	ros::NodeHandle nd;
-	// Get the node name ot send to the watchdog
+	// Print the node name
 	std::string nodeName = ros::this_node::getName();
 	printf("Node name: %s\n", nodeName.c_str());
 	// Set up the message publisher
-	ros::Publisher wd_petter =
-		nd.advertise <watchdog::pet_dog_msg> ("pet_dog_msg", 1000);
+	// ros::Publisher wd_petter =
+	// 	nd.advertise <watchdog::pet_dog_msg> ("pet_dog_msg", 1000);
 	// Allows for a 1 second delay between messages
 	ros::Duration loop_wait(1);
 	// For storing pets
-	watchdog::pet_dog_msg msg;
-	msg.petterName = nodeName; // Pack data
-	while (ros::ok()) {
-		// Pet the dog
-		wd_petter.publish(msg);
-		// Wait 1 second
-		loop_wait.sleep();
-	}
+	// watchdog::pet_dog_msg msg;
+	// msg.petterName = nodeName; // Pack data
+	// while (ros::ok()) {
+	// 	// Pet the dog
+	// 	// wd_petter.publish(msg);
+	// 	// Wait 1 second
+	// 	loop_wait.sleep();
+	// }
 } // main

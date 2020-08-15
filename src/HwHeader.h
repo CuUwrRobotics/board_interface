@@ -14,7 +14,7 @@ using namespace std;
 #include "AllDevicesInterfaces.h"
 #include "PinBus.h"
 #include "BitTesting.h"
-#include "watchdog/pet_dog_msg.h"
+// #include "watchdog/pet_dog_msg.h"
 #include <map> // Mot used here, but necesary for the maps
 #include <utility> // TODO: do we need this?
 #include "Indexer.h"
