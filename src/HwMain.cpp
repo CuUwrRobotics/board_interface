@@ -22,6 +22,9 @@ std::map <Interface_t, uint8_t> interface_qty;
 std::map <Device_Indexer_t, Device *> devices;
 std::map <Device_t, uint8_t> device_qty;
 
+std::map <Publisher_Indexer_t, ros::Publisher> publishers;
+std::map <Publisher_t, uint8_t> publisher_qty;
+
 // Tells devices if the hardware is actually connected or if it should be faked
 bool simulate_hw = false;
 // Whether a BIT test will run at start
@@ -760,25 +763,124 @@ void enterLoop() {
 	// Connect ROS
 	printf("Starting up ROS.\n");
 	// Start ROS and get the node instance
-	ros::init(argc, argv, "board_interface");
 	ros::NodeHandle nd;
 	// Print the node name
 	std::string nodeName = ros::this_node::getName();
 	printf("Node name: %s\n", nodeName.c_str());
 
+	// Set how many publishers to create
+
 	// Set up the message publishers
-	ros::Publisher gpio_publisher[3];
-	gpio_publisher[0] = nd.advertise <board_interface::gpio> ("gpio_0", 0);
+	Publisher_Indexer_t pub;
+	std::string topic_name = "";
+	char index_number = 0;
+	// For each type of publisher
+	for (pub.type = PUB_INVALID; pub.step(); ) {
+		publisher_qty[pub.type] = interface_qty[pub.getInterfaceType()];
+		if (pub.type == PUB_TELEMETRY)
+			publisher_qty[pub.type] = 1;
+		if (publisher_qty[pub.type] < 1) {
+			// No publishers of this type, so don't try anything.
+			continue;
+		}
+		// For each interface that needs publishing
+		for (pub.index = 0; pub.index < publisher_qty[pub.type];
+		     pub.index++) {
+			// Create the publisher, based on the type to use
+			switch (pub.type) {
+			case PUB_GPIO:
+				topic_name = "gpio_";
+				index_number = '0' + pub.index;
+				topic_name += index_number;
+				printf("Topic name: %s\n", topic_name.c_str());
+				publishers[pub] =
+					nd.advertise <board_interface::gpio> (topic_name.c_str(), 0);
+				break;
+			case PUB_PWM:
+				topic_name = "pwm_";
+				index_number = '0' + pub.index;
+				topic_name += index_number;
+				printf("Topic name: %s\n", topic_name.c_str());
+				publishers[pub] =
+					nd.advertise <board_interface::pwm> (topic_name.c_str(), 0);
+				break;
+			case PUB_ADC:
+				topic_name = "adc_";
+				index_number = '0' + pub.index;
+				topic_name += index_number;
+				printf("Topic name: %s\n", topic_name.c_str());
+				publishers[pub] =
+					nd.advertise <board_interface::adc> (topic_name.c_str(), 0);
+				break;
+			case PUB_TELEMETRY:
+				topic_name = "telemetry_";
+				index_number = '0' + pub.index;
+				topic_name += index_number;
+				printf("Topic name: %s\n", topic_name.c_str());
+				publishers[pub] =
+					nd.advertise <board_interface::telemetry> (topic_name.c_str(), 0);
+			default:
+				break;
+			} // switch
+		}
+	}
+	// ros::Publisher gpio_publisher[3];
+// gpio_publisher[0] = nd.advertise <board_interface::gpio> ("gpio_0", 0);
 	// Allows for a 1 second delay between messages
 	ros::Duration loop_wait(1);
-	// For storing pets
-	board_interface::gpio gpio_msg[3];
-	// msg.petterName = nodeName; // Pack data
+	// For storing messages temporarily
+	board_interface::gpio gpio_msg;
+	board_interface::pwm pwm_msg;
+	board_interface::adc adc_msg;
+	board_interface::telemetry telemetry_msg;
 	while (ros::ok()) {
-		// Pet the dog
-		gpio_msg[0].header.stamp = ros::Time::now();
-		gpio_publisher[0].publish(gpio_msg[0]);
-		// Wait 1 second
+		// Update data (is done in the switch)
+		for (pub.type = PUB_INVALID; pub.step(); ) {
+			publisher_qty[pub.type] = interface_qty[pub.getInterfaceType()];
+			if (pub.type == PUB_TELEMETRY)
+				publisher_qty[pub.type] = 1;
+			if (publisher_qty[pub.type] < 1) {
+				// No publishers of this type, so don't try anything.
+				continue;
+			}
+			// Create the publisher, based on the type to use
+			switch (pub.type) {
+			case PUB_GPIO: // Pet the dog
+				// For each interface that needs publishing
+				for (pub.index = 0; pub.index < publisher_qty[pub.type];
+				     pub.index++) {
+					gpio_msg.header.stamp = ros::Time::now();
+					publishers[pub].publish(gpio_msg); // publish
+				}
+				break;
+			case PUB_PWM:
+				// For each interface that needs publishing
+				for (pub.index = 0; pub.index < publisher_qty[pub.type];
+				     pub.index++) {
+					pwm_msg.header.stamp = ros::Time::now();
+					publishers[pub].publish(pwm_msg); // publish
+				}
+				break;
+			case PUB_ADC:
+				// For each interface that needs publishing
+				for (pub.index = 0; pub.index < publisher_qty[pub.type];
+				     pub.index++) {
+					adc_msg.header.stamp = ros::Time::now();
+					publishers[pub].publish(adc_msg); // publish
+				}
+				break;
+			case PUB_TELEMETRY:
+				// For each interface that needs publishing
+				for (pub.index = 0; pub.index < publisher_qty[pub.type];
+				     pub.index++) {
+					telemetry_msg.header.stamp = ros::Time::now();
+					publishers[pub].publish(telemetry_msg); // publish
+				}
+				break;
+			default:
+				break;
+			} // switch
+		}
 		loop_wait.sleep();
 	}
 } // enterLoop
@@ -798,6 +900,7 @@ int main(int argc, char *argv[]){
 	// if (use_bit_test) // If the argument to ensable BIT tests was passed, run them
 	// 	runBitTest(); // Test interfaces
 
+	ros::init(argc, argv, "board_interface");
 	// Startup complete; start looping
 	enterLoop();
 } // main

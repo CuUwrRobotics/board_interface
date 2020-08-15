@@ -19,6 +19,7 @@ using namespace std;
 #include <utility> // TODO: do we need this?
 #include "Indexer.h"
 #include "HardwareMessages.h"
+#include "Publisher_Indexer.h"
 
 // If incompatible enums are compared, an error will be thrown instead of a warning.
 #pragma GCC diagnostic error "-Wenum-compare"
