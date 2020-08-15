@@ -433,6 +433,9 @@ void calibrateAdc() {
 		log_error(
 			"Multiple VREF interfaces detected. The code is currently able to use only one, so it will use VREF[0]");
 
+	log_info("Getting vref interface. Type: %s",
+	         interfaces[vrefIndex]->getInterfaceName());
+
 	// First, set the truth values.
 	float diodeData[2] = {actualDiodeVoltage, actualDiodeTolerance};
 	cfg.fmt = ICFG_REF_KNOWN_VOLTS_WITH_TOLERANCE; // Set format

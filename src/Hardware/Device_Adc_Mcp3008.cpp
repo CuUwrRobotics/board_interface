@@ -105,7 +105,7 @@ bool Device_Adc_Mcp3008::updateData(){
 			pinValues[pin] = (0.625 * ADC_STEPS / AVCC_THEORETICAL_VALUE) * (pin + 1);
 		}
 		// Hacky way of getting correct telemetry data
-		if (deviceIndex.index == 0) { // CURRENT 0
+		if (deviceIndex.index == 2) { // CURRENT 2
 			pinValues[0] = 389; // -10 amps
 			pinValues[1] = 635; // +10 amps
 			pinValues[2] = 614; // 3v
