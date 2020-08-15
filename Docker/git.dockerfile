@@ -1,4 +1,4 @@
-# This will create a dockerfile and then clone the repository put in the 
+# This will create a dockerfile and then clone the repository put in the
 # environment variables.
 # Requires that base.dockerfile is also built (use make base)
 FROM pirhanabot:base-ros

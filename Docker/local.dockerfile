@@ -8,9 +8,9 @@ FROM pirhanabot:base-ros
 ENV HOME=/root
 RUN mkdir ${HOME}/catkin_ws
 RUN mkdir ${HOME}/catkin_ws/src
-# Copy the packages
-COPY board_interface/ ${HOME}/catkin_ws/src/board_interface/
-COPY watchdog/ ${HOME}/catkin_ws/src/watchdog/
+# Copy the package
+COPY ./ ${HOME}/catkin_ws/src/board_interface/
+# Watchdog is also needed, and will be pulled in catkin_setup.sh
 
 # Copy a catkin helper because catkin is bad
 COPY catkin/Makefile ${HOME}/catkin_ws/
