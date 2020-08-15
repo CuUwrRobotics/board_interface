@@ -121,6 +121,7 @@ catkin_package(
 include_directories(
   src
   src/Hardware
+  test
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -140,7 +141,7 @@ include_directories(
 set(DEVICES
 	src/Device.cpp
 	src/Hardware/Device_Adc_Mcp3008.cpp
-		src/Hardware/Device_Gpio_Mcp23017.cpp
+	src/Hardware/Device_Gpio_Mcp23017.cpp
 	src/Hardware/Device_Pwm_Pca9685.cpp
 	)
 
@@ -158,14 +159,18 @@ set(INTERFACES
 	src/Hardware/Interface_Voltage_Div.cpp
 	src/Hardware/Interface_Voltage_Refrence.cpp
 	)
-set(OTHER_C_FILES
-	src/BitTesting.cpp
-	)
 set(PINBUS
 	src/PinBus.cpp
 )
- add_executable(${PROJECT_NAME}_node src/HwMain.cpp ${PINBUS} ${INTERFACES} ${DEVICES} ${OTHER_C_FILES})
-# add_executable(${PROJECT_NAME}_node src/HwMain.cpp
+ add_executable(${PROJECT_NAME}_node src/HwMain.cpp ${PINBUS} ${INTERFACES} ${DEVICES})
+
+
+set(BIT_TESTING
+  test/bit_testing.cpp
+  )
+
+add_executable(bit_node ${BIT_TESTING})
+
 # 	src/PinBus.cpp
 # 	src/Device.cpp
 # 	src/Hardware/Device_Adc_Mcp3008.cpp
