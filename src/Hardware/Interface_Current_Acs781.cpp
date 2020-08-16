@@ -93,6 +93,7 @@ DataError_t Interface_Current_Acs781::readPin(PinValue_t *valueIn) {
 		valueIn->data[0] -= CURRENT_ZERO_OFFSET_VOLTS; // Zero offset correction
 		return errorVal;
 		break;
+	case VALUE_DATA_DUMP: // Also the data format for dumping data over ROS messages
 	case VALUE_CURRENT_AMPS_WITH_TOLERANCE:
 		valueIn->data[0] = valueIn->data[0] *
 		                   (avccTheoretical / adcSteps) * avccOffsetRatio; // Voltage
@@ -118,8 +119,8 @@ DataError_t Interface_Current_Acs781::writePin(PinValue_t *valueIn) {
 DataError_t Interface_Current_Acs781::writeConfig(InterfaceConfig_t *cfg) {
 	switch (cfg->fmt) {
 	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		cfg->data[0] = avccOffsetRatio;
-		cfg->data[1] = avccOffsetToleranceRatio;
+		avccOffsetRatio = cfg->data[0];
+		avccOffsetToleranceRatio = cfg->data[1];
 		return ERROR_SUCCESS;
 		break;
 	default:
@@ -131,8 +132,8 @@ DataError_t Interface_Current_Acs781::writeConfig(InterfaceConfig_t *cfg) {
 DataError_t Interface_Current_Acs781::readConfig(InterfaceConfig_t *cfg) {
 	switch (cfg->fmt) {
 	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		avccOffsetRatio = cfg->data[0];
-		avccOffsetToleranceRatio = cfg->data[1];
+		cfg->data[0] = avccOffsetRatio;
+		cfg->data[1] = avccOffsetToleranceRatio;
 		return ERROR_SUCCESS;
 		break;
 	default:
@@ -149,7 +150,8 @@ DataError_t Interface_Current_Acs781::readDeviceConfig(DeviceConfig_t *cfg) {
 	return ERROR_NOT_AVAIL;
 } // readDeviceConfig
 
-uint8_t Interface_Current_Acs781::setPinMode(uint8_t pinNumber, PinMode_t pinMode){
+uint8_t Interface_Current_Acs781::setPinMode(uint8_t pinNumber,
+                                             PinMode_t pinMode){
 	ROS_INFO("setPinMode: Data cannot be written to the %s interface!",
 	         interfaceIdToCharArray(interfaceTypeId));
 	return 0;

@@ -90,8 +90,8 @@ DataError_t Interface_Adc::writePin(PinValue_t *value) {
 DataError_t Interface_Adc::writeConfig(InterfaceConfig_t *cfg) {
 	switch (cfg->fmt) {
 	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		cfg->data[0] = avccOffsetRatio;
-		cfg->data[1] = avccOffsetToleranceRatio;
+		avccOffsetRatio = cfg->data[0];
+		avccOffsetToleranceRatio = cfg->data[1];
 		return ERROR_SUCCESS;
 		break;
 	default:
@@ -103,8 +103,8 @@ DataError_t Interface_Adc::writeConfig(InterfaceConfig_t *cfg) {
 DataError_t Interface_Adc::readConfig(InterfaceConfig_t *cfg) {
 	switch (cfg->fmt) {
 	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		avccOffsetRatio = cfg->data[0];
-		avccOffsetToleranceRatio = cfg->data[1];
+		cfg->data[0] = avccOffsetRatio;
+		cfg->data[1] = avccOffsetToleranceRatio;
 		return ERROR_SUCCESS;
 		break;
 	default:

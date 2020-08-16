@@ -54,6 +54,7 @@ add_message_files(
   gpio.msg
   power.msg
   pwm.msg
+  leak.msg
   telemetry.msg
 )
 

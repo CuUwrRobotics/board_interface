@@ -7,6 +7,7 @@
  * actually reading/writing data on a device's pin, it is a configuration.
  */
 enum DataValueFormat_t {VALUE_INVALID, /*< Default if data never gets set. */
+	                      VALUE_DATA_DUMP, /*< Puts all pin values into the data. */
 	                      // PWM
 	                      // ===
 	                      VALUE_PWM_DUTY_100, /*< Duty cycle */

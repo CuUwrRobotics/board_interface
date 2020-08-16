@@ -98,6 +98,7 @@ DataError_t Interface_Voltage_Div::readPin(PinValue_t *valueIn) {
 	case VALUE_ADC_DIRECT:
 		return errorVal;
 		break;
+	case VALUE_DATA_DUMP: // Also the data format for dumping data over ROS messages
 	case VALUE_ADC_VOLTAGE_WITH_TOLERANCE:
 		if (!calculateValues()) {
 			return ERROR_INTF_N_READY;
@@ -119,8 +120,8 @@ DataError_t Interface_Voltage_Div::writePin(PinValue_t *value) {
 DataError_t Interface_Voltage_Div::writeConfig(InterfaceConfig_t *cfg) {
 	switch (cfg->fmt) {
 	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		cfg->data[0] = avccOffsetRatio;
-		cfg->data[1] = avccOffsetToleranceRatio;
+		avccOffsetRatio = cfg->data[0];
+		avccOffsetToleranceRatio = cfg->data[1];
 		return ERROR_SUCCESS;
 		break;
 	case ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE:
@@ -142,8 +143,8 @@ DataError_t Interface_Voltage_Div::writeConfig(InterfaceConfig_t *cfg) {
 DataError_t Interface_Voltage_Div::readConfig(InterfaceConfig_t *cfg) {
 	switch (cfg->fmt) {
 	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		avccOffsetRatio = cfg->data[0];
-		avccOffsetToleranceRatio = cfg->data[1];
+		cfg->data[0] = avccOffsetRatio;
+		cfg->data[1] = avccOffsetToleranceRatio;
 		return ERROR_SUCCESS;
 		break;
 	case ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE:
