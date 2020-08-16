@@ -9,7 +9,6 @@
 // const static Device_t parentDeviceTypeId = DEVICE_PWM; // The IF for the device
 // ----------------------------------------------------------------------------
 
-
 /* These must be changed per interface to ensure operability.
  *****************************************************************************/
 
@@ -36,6 +35,11 @@ DataError_t Interface_Pwm::readPin(PinValue_t *valueIn) {
 
 	// Format data and return with the error/success code from device
 	switch (valueIn->fmt) {
+	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+		// TODO: prioritise
+		// Conversion to duty cycle happens inside device
+		return commDevice->getPinValue(&val);
+		break;
 	case VALUE_PWM_FREQ:
 	case VALUE_PWM_ON_TICKS:
 		// These can both be readdirectly from PWM devices.

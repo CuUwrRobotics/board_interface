@@ -6,5 +6,7 @@
 #include "board_interface/pwm.h"
 #include "board_interface/power.h"
 #include "board_interface/telemetry.h"
+#include "board_interface/leak.h"
+#include "board_interface/power.h"
 
 #endif /* end of include guard: HARDWARE_MESSAGES_H */

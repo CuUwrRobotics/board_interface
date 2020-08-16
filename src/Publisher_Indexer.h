@@ -10,6 +10,8 @@ enum Publisher_t {
 	PUB_GPIO,
 	PUB_PWM,
 	PUB_ADC,
+	PUB_LEAK,
+	PUB_POWER,
 	PUB_TELEMETRY,
 	PUB_LAST_
 };
@@ -37,6 +39,12 @@ public:
 		case PUB_ADC:
 			return INTF_ADC;
 			break;
+		case PUB_LEAK:
+			return INTF_LEAK;
+			break;
+		case PUB_POWER:
+			return INTF_PWR_SWITCHING;
+			break;
 		case PUB_TELEMETRY:
 			return INTF_INVALID; // No telemetry interface
 			break;
@@ -46,25 +54,35 @@ public:
 		} /* switch */
 	} /* getInterfaceType */
 
-	const std::string getTopicName(){
+	std::string getTopicName(){
+		std::string topic_name = "";
+		char index_char = 0;
 		switch (type) {
 		case PUB_GPIO:
-			topicString = "gpio_" + (index + '0');
+			topic_name = "gpio_";
 			break;
 		case PUB_PWM:
-			topicString = "pwm_" + (index + '0');
+			topic_name = "pwm_";
 			break;
 		case PUB_ADC:
-			topicString = "adc_" + (index + '0');
+			topic_name = "adc_";
+			break;
+		case PUB_LEAK:
+			topic_name = "leak_";
+			break;
+		case PUB_POWER:
+			topic_name = "power_";
 			break;
 		case PUB_TELEMETRY:
-			topicString = "telemetry";
+			topic_name = "telemetry_";
 			break;
 		default:
-			return "error_getting_topic_name";
+			return "error"; // prevents crashes from requesting invalid names
 			break;
 		} /* switch */
-		return topicString;
+		index_char = '0' + index;
+		topic_name += index_char;
+		return topic_name;
 	} /* toCharArray */
 
 	// For inline definitions
@@ -76,7 +94,7 @@ public:
 	};
 	Publisher_t type;
 	uint8_t index; // Must be < 255
-	std::string topicString;
+	// std::string topicString;
 	// Required for map array. Works by prioritizing type first, then index second.
 	bool operator < (const Publisher_Indexer_t &t) const {
 		return ((((uint16_t)this->type) << 8) | (this->index)) <

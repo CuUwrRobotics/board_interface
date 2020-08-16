@@ -35,6 +35,9 @@ DataError_t Interface_Leak::readPin(PinValue_t *valueIn) {
 
 	// Format data and return with the error/success code from device
 	switch (valueIn->fmt) {
+	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+		return commDevice->getPinValue(&val); // TODO: this sshould only have limited pins!
+		break;
 	case VALUE_GPIO_STATE:
 		return errorVal;
 		break;

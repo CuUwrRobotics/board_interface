@@ -436,9 +436,6 @@ void calibrateAdc() {
 		log_error(
 			"Multiple VREF interfaces detected. The code is currently able to use only one, so it will use VREF[0]");
 
-	log_info("Getting vref interface. Type: %s",
-	         interfaces[vrefIndex]->getInterfaceName());
-
 	// First, set the truth values.
 	float diodeData[2] = {actualDiodeVoltage, actualDiodeTolerance};
 	cfg.fmt = ICFG_REF_KNOWN_VOLTS_WITH_TOLERANCE; // Set format
@@ -451,7 +448,7 @@ void calibrateAdc() {
 	cfg.data = &refReady;
 	interfaces[vrefIndex]->readConfig(&cfg);
 	if (!refReady) {
-		log_error("%sVREF Interface did not give ready, cannot calibrate!%s\n");
+		log_error("VREF Interface did not give ready, cannot calibrate!\n");
 		return;
 	}
 	cfg.fmt = ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS; // Set format
@@ -478,12 +475,12 @@ void calibrateAdc() {
 	// toleranceRatio = ((actualDiodeTolerance / actualDiodeVoltage) +
 	//                   (adcTolerance / diodeVoltage));
 	toleranceAtAvcc = toleranceRatio * avccActual;
-	printf("\tOffset ratio          \t  = %s%5.2f%s\t±%s%4.2f%s%\n",
+	printf("\tOffset ratio          \t  = %s%5.2f%s\t±%s%4.2f%s\n",
 	       WHITE, offsetRatio, NO_COLOR,
 	       WHITE, toleranceRatio * 100, NO_COLOR);
-	printf("\t%sAt measured %s5.00%sV, actual = %s%5.2f%sV\t±%s%.2f%sV\n",
+	printf("\t%sAt measured %s%5.2f%sV actual = %s%5.2f%sV\t±%s%.2f%sV\n",
 	       NO_COLOR, // Text color
-	       WHITE, NO_COLOR, // '5.00' color
+	       WHITE, avccTheoretical, NO_COLOR,
 	       WHITE, avccActual, NO_COLOR,
 	       WHITE, toleranceAtAvcc, NO_COLOR);
 	// Pack data into any interface which identifies as an ADC-based interface
@@ -498,13 +495,13 @@ void calibrateAdc() {
 		if (interface_qty[intf.type] == 0) { continue; }
 		for (intf.index = 0; intf.index < interface_qty[intf.type];
 		     intf.index++) {
-			// Not an analog device's interface
+			// Not an analog device interface
 			if (interfaces[intf]->getParentTypeId() != DEVICE_ADC) {continue;}
 			// Write data into interface:
 			interfaces[intf]->writeConfig(&cfg);
 			printf("\tData has been stored in %s%s%s interface, index %s%d%s.\n",
 			       WHITE, interfaces[intf]->getInterfaceName(), NO_COLOR,
-			       WHITE, intf, NO_COLOR);
+			       WHITE, intf.index, NO_COLOR);
 		}
 	}
 } // calibrateAdc
@@ -515,49 +512,51 @@ void calibrateAdc() {
 
 void setupPowerLineReaders() {
 	// TODO: FIX
-	// InterfaceConfig_t cfg; // For configuring interfaces
-	// PinValue_t val; // For checking interface outputs
-	//
-	// uint8_t lowestVoltageDividerIndex = 14;
-	// uint8_t highestVoltageDividerIndex = 18;
-	//
-	// float data;
-	//
-	// // These are all chosen based on the interface board REV A.
-	// printf("\n%sPower Line Startup: assigning resistor divider values.%s\n",
-	//        YELLOW,
-	//        NO_COLOR);
-	// // Technically in Ohms, but the ratio is all that matters.
-	// // To reduce error, measure actual resistors once installed, enter values, and
-	// // use a tolerance of zero.
-	// float highResistorValuesAndTolerances[4][2] = {
-	// 	{0, 0},
-	// 	{0, 0},
-	// 	{2.2, 0.05},
-	// 	{11,  0.05}};
-	// float lowResistorValuesAndTolerances[4][2] = {
-	// 	{0, 0},
-	// 	{0, 0},
-	// 	{1, 0.05},
-	// 	{1, 0.05}};
-	// for (uint8_t i = lowestVoltageDividerIndex; i < highestVoltageDividerIndex;
-	//      i++) {
-	// 	cfg.fmt = ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE; // Set format
-	// 	cfg.data = highResistorValuesAndTolerances[i - lowestVoltageDividerIndex];
-	// 	interfaces[i]->writeConfig(&cfg);
-	//
-	// 	cfg.fmt = ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE; // Set format
-	// 	cfg.data = lowResistorValuesAndTolerances[i - lowestVoltageDividerIndex];
-	// 	interfaces[i]->writeConfig(&cfg);
-	//
-	// 	val.fmt = VALUE_ADC_VOLTAGE_WITH_TOLERANCE; // Set format
-	// 	val.pin = 0;
-	// 	val.data = &data;
-	// 	interfaces[i]->readPin(&val);
-	// 	printf("\tPL interface %s%d%s:\t%s%5.2f%sV\n",
-	// 	       WHITE, i, NO_COLOR,
-	// 	       WHITE, data, NO_COLOR);
-	// }
+	InterfaceConfig_t cfg; // For configuring interfaces
+	Interface_Indexer_t vDiv_i = Interface_Indexer_t(INTF_VOLTAGE_DIVIDER, 0);
+
+	// Prevent SEGFAULTS
+	if (interface_qty[vDiv_i.type] == 0) {
+		log_error("No voltage divider interfaces found.");
+		return;
+	}
+
+	// These are all chosen based on the interface board REV A.
+	printf("\n%sPower Line Startup: assigning resistor divider values.%s\n",
+	       YELLOW,
+	       NO_COLOR);
+
+	// Technically in Ohms, but the ratio is all that matters.
+	// To reduce error, measure actual resistors once installed, enter values, and
+	// use a tolerance of zero.
+	float highResistorValuesAndTolerances[4][2] = {
+		{0, 0},
+		{0, 0},
+		{2.2, 0.05},
+		{11,  0.05}};
+	float lowResistorValuesAndTolerances[4][2] = {
+		{0, 0},
+		{0, 0},
+		{1, 0.05},
+		{1, 0.05}};
+
+	printf("Voltage divider interfaces: %d\n", interface_qty[vDiv_i.type]);
+
+	// For each V_DIV interface
+	for (vDiv_i.index = 0; vDiv_i.index < interface_qty[vDiv_i.type];
+	     vDiv_i.index++) {
+		cfg.fmt = ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE; // Set format
+		cfg.data = highResistorValuesAndTolerances[vDiv_i.index];
+		interfaces[vDiv_i]->writeConfig(&cfg);
+
+		cfg.fmt = ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE; // Set format
+		cfg.data = lowResistorValuesAndTolerances[vDiv_i.index];
+		interfaces[vDiv_i]->writeConfig(&cfg);
+
+		printf("\tVoltage divider #%s%d%s assigned.",
+		       WHITE, vDiv_i.index, NO_COLOR);
+	}
+	printf("\n");
 } // setupPowerLineReaders
 
 void updateAllDevices() {
@@ -613,7 +612,7 @@ void startupConfig(){
 	updateAllDevices();
 
 	calibrateAdc(); // Calibrate the ADCs based on the known real AVCC value.
-	// setupPowerLineReaders(); // Assign resitor values for the power line interfaces
+	setupPowerLineReaders(); // Assign resitor values for the power line interfaces
 
 	updateAllDevices();
 } // startupConfig
@@ -786,37 +785,31 @@ void enterLoop() {
 		// For each interface that needs publishing
 		for (pub.index = 0; pub.index < publisher_qty[pub.type];
 		     pub.index++) {
+			topic_name = pub.getTopicName();
+			printf("Topic name: %s\n", topic_name.c_str());
 			// Create the publisher, based on the type to use
 			switch (pub.type) {
 			case PUB_GPIO:
-				topic_name = "gpio_";
-				index_number = '0' + pub.index;
-				topic_name += index_number;
-				printf("Topic name: %s\n", topic_name.c_str());
 				publishers[pub] =
 					nd.advertise <board_interface::gpio> (topic_name.c_str(), 0);
 				break;
 			case PUB_PWM:
-				topic_name = "pwm_";
-				index_number = '0' + pub.index;
-				topic_name += index_number;
-				printf("Topic name: %s\n", topic_name.c_str());
 				publishers[pub] =
 					nd.advertise <board_interface::pwm> (topic_name.c_str(), 0);
 				break;
 			case PUB_ADC:
-				topic_name = "adc_";
-				index_number = '0' + pub.index;
-				topic_name += index_number;
-				printf("Topic name: %s\n", topic_name.c_str());
 				publishers[pub] =
 					nd.advertise <board_interface::adc> (topic_name.c_str(), 0);
 				break;
+			case PUB_LEAK:
+				publishers[pub] =
+					nd.advertise <board_interface::leak> (topic_name.c_str(), 0);
+				break;
+			case PUB_POWER:
+				publishers[pub] =
+					nd.advertise <board_interface::power> (topic_name.c_str(), 0);
+				break;
 			case PUB_TELEMETRY:
-				topic_name = "telemetry_";
-				index_number = '0' + pub.index;
-				topic_name += index_number;
-				printf("Topic name: %s\n", topic_name.c_str());
 				publishers[pub] =
 					nd.advertise <board_interface::telemetry> (topic_name.c_str(), 0);
 			default:
@@ -832,7 +825,25 @@ void enterLoop() {
 	board_interface::gpio gpio_msg;
 	board_interface::pwm pwm_msg;
 	board_interface::adc adc_msg;
+	board_interface::leak leak_msg;
+	board_interface::power power_msg;
 	board_interface::telemetry telemetry_msg;
+	// Since we are just pushing out data, no writes are performed, so R/W masks are 0
+	gpio_msg.rw_mask = 0;
+	pwm_msg.rw_mask = 0;
+	power_msg.rw_mask = 0;
+	telemetry_msg.em_io_rw_mask = 0;
+
+	// These will be used to access the interfaces and their data
+	Interface_Indexer_t intf_i;
+	PinValue_t pin_value_reader; // Reads pin value
+	float data[17]; // Stores the data for all pins + one extra for PWM frequency
+	pin_value_reader.data = data; // Pointer to data
+	pin_value_reader.fmt = VALUE_DATA_DUMP; // Gets all data from all interface pins
+	pin_value_reader.pin = 0;
+
+	uint8_t pin_i; // For iterating through devices. Kept out of loop for efficiency.
+
 	while (ros::ok()) {
 		// Update data (is done in the switch)
 		for (pub.type = PUB_INVALID; pub.step(); ) {
@@ -843,13 +854,20 @@ void enterLoop() {
 				// No publishers of this type, so don't try anything.
 				continue;
 			}
-			// Create the publisher, based on the type to use
+
+			intf_i.type = pub.getInterfaceType(); // Load the type into the data for the interface
+
+			// Publish data, based on the type to use
 			switch (pub.type) {
 			case PUB_GPIO: // Pet the dog
 				// For each interface that needs publishing
 				for (pub.index = 0; pub.index < publisher_qty[pub.type];
 				     pub.index++) {
-					gpio_msg.header.stamp = ros::Time::now();
+					intf_i.index = pub.index; // Assign index
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					gpio_msg.modes = (uint16_t)data[0]; // Modes
+					gpio_msg.values = (uint16_t)data[1]; // States
+					gpio_msg.header.stamp = ros::Time::now(); // TODO: this must be accessed from device!
 					publishers[pub].publish(gpio_msg); // publish
 				}
 				break;
@@ -857,7 +875,12 @@ void enterLoop() {
 				// For each interface that needs publishing
 				for (pub.index = 0; pub.index < publisher_qty[pub.type];
 				     pub.index++) {
-					pwm_msg.header.stamp = ros::Time::now();
+					intf_i.index = pub.index; // Assign index
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					pwm_msg.frequency = data[16];
+					for (pin_i = 0; pin_i < 16; pin_i++)
+						pwm_msg.values[pin_i] = data[pin_i];
+					pwm_msg.header.stamp = ros::Time::now(); // TODO: this must be accessed from device!
 					publishers[pub].publish(pwm_msg); // publish
 				}
 				break;
@@ -865,16 +888,74 @@ void enterLoop() {
 				// For each interface that needs publishing
 				for (pub.index = 0; pub.index < publisher_qty[pub.type];
 				     pub.index++) {
-					adc_msg.header.stamp = ros::Time::now();
+					intf_i.index = pub.index; // Assign index
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					for (pin_i = 0; pin_i < 8; pin_i++) {
+						adc_msg.values[pin_i] = data[pin_i];
+						// Tolerance is stored in second half of array
+						adc_msg.values_tolerance[pin_i] = data[8 + pin_i];
+					}
+					adc_msg.header.stamp = ros::Time::now(); // TODO: this must be accessed from device!
 					publishers[pub].publish(adc_msg); // publish
+				}
+				break;
+			case PUB_LEAK:
+				// For each interface that needs publishing
+				for (pub.index = 0; pub.index < publisher_qty[pub.type];
+				     pub.index++) {
+					intf_i.index = pub.index; // Assign index
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					leak_msg.values = (uint16_t)data[0];
+					leak_msg.header.stamp = ros::Time::now(); // TODO: this must be accessed from device!
+					publishers[pub].publish(leak_msg); // publish
+				}
+				break;
+			case PUB_POWER:
+				// For each interface that needs publishing
+				for (pub.index = 0; pub.index < publisher_qty[pub.type];
+				     pub.index++) {
+					intf_i.index = pub.index; // Assign index
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					power_msg.values = (uint16_t)data[0];
+					power_msg.header.stamp = ros::Time::now(); // TODO: this must be accessed from device!
+					publishers[pub].publish(power_msg); // publish
 				}
 				break;
 			case PUB_TELEMETRY:
 				// For each interface that needs publishing
 				for (pub.index = 0; pub.index < publisher_qty[pub.type];
 				     pub.index++) {
-					telemetry_msg.header.stamp = ros::Time::now();
-					publishers[pub].publish(telemetry_msg); // publish
+					// Telemetry must read from many interfaces.
+					// TEMPERATURE //////////////////////////////////////////////////////
+					intf_i.type = INTF_TEMP;
+					intf_i.index = 0;
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					telemetry_msg.temperature_deg_c = data[0];
+					telemetry_msg.temperature_deg_c_tolerance = data[1];
+					// CURRENTx2 ////////////////////////////////////////////////////////
+					intf_i.type = INTF_CURRENT;
+					for (intf_i.index = 0; intf_i.index < 2; intf_i.index++) {
+						interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+						telemetry_msg.current_amps[intf_i.index] = data[0];
+						telemetry_msg.current_amps_tolerance[intf_i.index] = data[1];
+					}
+					// POWER LINE x4 ////////////////////////////////////////////////////
+					intf_i.type = INTF_VOLTAGE_DIVIDER;
+					for (intf_i.index = 0; intf_i.index < 4; intf_i.index++) {
+						interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+						telemetry_msg.power_line_volts[intf_i.index] = data[0];
+						telemetry_msg.power_line_volts_tolerance[intf_i.index] = data[1];
+					}
+					// SWITCHES /////////////////////////////////////////////////////////
+					// intf_i.type = INTF_SWITCHES;
+					// Switches are not inplemented yet
+					// EMERGENCY IO /////////////////////////////////////////////////////
+					intf_i.type = INTF_EMERGENCY_IO;
+					intf_i.index = 0;
+					interfaces[intf_i]->readPin(&pin_value_reader); // Get data from interface
+					telemetry_msg.em_io = (uint16_t)data[0];
+					// Publish the data /////////////////////////////////////////////////
+					publishers[pub].publish(telemetry_msg); // Publish the data
 				}
 				break;
 			default:

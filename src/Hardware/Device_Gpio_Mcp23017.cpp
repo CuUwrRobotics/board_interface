@@ -52,14 +52,40 @@ bool Device_Gpio_Mcp23017::deviceInit(){
 DataError_t Device_Gpio_Mcp23017::getPinValue(PinValue_t *value){
 	if (!(value->pin >= 0 && value->pin < PIN_COUNT))
 		return ERROR_DEV_PIN_INVALID;
-	if (value->fmt == VALUE_GPIO_STATE) {
+	switch (value->fmt) {
+	case VALUE_GPIO_STATE:
 		// Gets the on/off bit and returns as a 1 or 0.
-		// value->data[0] = ((uint16_t)((currentPinValues >> pin) & 0x01) !=
-		//                   (uint16_t)0) ? 1 : 0;
 		value->data[0] = ((currentPinValues >> value->pin) & 0x01);
 		return ERROR_SUCCESS;
+		break;
+	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+		// Because data tranfrers happen with floats, and floats cannot be manipulated
+		// with hbit-shifting, we need to store bits into uinsigned integers, then
+		// convert those to floats. Thos floats must be converted back into unsinged
+		// 16-bit integers after. This relies on the hope that floats will be precise
+		// enough for these values to keep at least the ones place intact! If they are
+		// not, doubles will be needed, but floats should be enough as we are only
+		// dealing with 'small' values (up to 2^17 - 1)
+	{ // Needed to scope variables created in this case statement
+		PinMode_t mode = MODE_INVALID; // For packing modes into data
+		uint16_t modes; // Stores mode bits temporarily before storing into a float
+		// Put all data into value
+		value->data[0] = (float)currentPinValues;
+// Get modes and pack into bit array
+		for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+			mode = currentPinBus.getPinMode(pin);
+			if (mode == MODE_INPUT) {
+				modes |= 0x01 << pin; // Set bit
+			} else modes &= ~(0x01 << pin); // Clear bit
+		}
+		value->data[1] = (float)modes; // Store modes into the float
+		return ERROR_SUCCESS;
+		break;
 	}
-	return ERROR_NOT_AVAIL;
+	default:
+		return ERROR_NOT_AVAIL;
+		break;
+	} // switch
 } // getPinValue
 
 DataError_t Device_Gpio_Mcp23017::setPinValue(PinValue_t *value) {

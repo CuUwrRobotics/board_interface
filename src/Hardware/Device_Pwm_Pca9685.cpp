@@ -49,15 +49,31 @@ bool Device_Pwm_Pca9685::deviceInit(){
 } /* deviceInit */
 
 DataError_t Device_Pwm_Pca9685::getPinValue(PinValue_t *value){
-	if (value->fmt == VALUE_PWM_FREQ) {
+	switch (value->fmt) {
+	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+		// TODO: priority
+		// Stores all pins and base frequency into the array. This requires an array
+		// of length PIN_COUNT + 1.
+		// This is the only time when it is appropriate to have a conversion in the
+		// device! It's only here for efficiency
+		for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+			value->data[pin] = (currentPinTicks[value->pin] / (MAX_PWM_TICKS / 100));
+		}
+		value->data[16] = currentFrequencyValue;
+		return ERROR_SUCCESS;
+		break;
+	case VALUE_PWM_FREQ:
 		value->data[0] = currentFrequencyValue;
 		return ERROR_SUCCESS;
-	}
-	if (value->fmt == VALUE_PWM_ON_TICKS) {
+		break;
+	case VALUE_PWM_ON_TICKS:
 		value->data[0] = currentPinTicks[value->pin];
 		return ERROR_SUCCESS;
-	}
-	return ERROR_NOT_AVAIL;
+		break;
+	default:
+		return ERROR_NOT_AVAIL;
+		break;
+	} // switch
 } // getPinValue
 
 /**

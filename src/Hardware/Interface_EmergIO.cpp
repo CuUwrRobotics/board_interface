@@ -40,6 +40,10 @@ DataError_t Interface_EmergIO::readPin(PinValue_t *valueIn) {
 
 	// Format data and return with the error/success code from device
 	switch (valueIn->fmt) {
+	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+		// TODO: Prioritise these modes with attribute
+		return commDevice->getPinValue(&val);
+		break;
 	case VALUE_GPIO_STATE:
 		return errorVal;
 		break;
