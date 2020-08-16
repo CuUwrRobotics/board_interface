@@ -6,8 +6,8 @@
  * IMPORTANT: If data being transferred to/from an interface/device is not for
  * actually reading/writing data on a device's pin, it is a configuration.
  */
-enum DataValueFormat_t {VALUE_INVALID, /*< Default if data never gets set. */
-	                      VALUE_DATA_DUMP, /*< Puts all pin values into the data. */
+enum DataValueFormat_t {VALUE_INVALID_, /*< Default if data never gets set. */
+	                      VALUE_ROS_DATA_, /*< Puts all pin values into the data. */
 	                      // PWM
 	                      // ===
 	                      VALUE_PWM_DUTY_100, /*< Duty cycle */
@@ -49,7 +49,7 @@ enum DataValueFormat_t {VALUE_INVALID, /*< Default if data never gets set. */
 /**
  * Defines the formats for assigning or reading interface configurations.
  */
-enum InterfaceConfigFormat_t {ICFG_INTERFACE_CONFIG_INVALID, /*< Default if data never gets set. */
+enum InterfaceConfigFormat_t {ICFG_INVALID_, /*< Default if data never gets set. */
 	                            // ADC
 	                            // ===
 
@@ -104,7 +104,7 @@ enum InterfaceConfigFormat_t {ICFG_INTERFACE_CONFIG_INVALID, /*< Default if data
  * TODO
  */
 
-enum DeviceConfigFormat_t {DCFG_DEVICE_CONFIG_INVALID, /*< Default if data never gets set. */
+enum DeviceConfigFormat_t {DCFG_INVALID_, /*< Default if data never gets set. */
 	                         // ADC
 	                         // ===
 	                         DCFG_ADC_STEPS, /*< The number of ADC steps.

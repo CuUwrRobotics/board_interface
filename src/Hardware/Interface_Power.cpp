@@ -25,7 +25,7 @@ void Interface_Power::prepareInterface(){
 DataError_t Interface_Power::readPin(PinValue_t *valueIn) {
 	if (!(valueIn->pin >= 0 && valueIn->pin < PIN_COUNT))
 		return ERROR_INTF_PIN_INVALID;
-
+	// TODO: only do this if the fmt is NOT VALUE_ROS_DATA_
 	PinValue_t val;
 	DataError_t errorVal;
 	// Reads the pin on the device. Formatting/scaling/other data changes happen below.
@@ -36,9 +36,23 @@ DataError_t Interface_Power::readPin(PinValue_t *valueIn) {
 
 	// Format data and return with the error/success code from device
 	switch (valueIn->fmt) {
-	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
-		return commDevice->getPinValue(&val); // TODO: this sshould only have limited pins!
+	case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
+	{ // For scoping of variables create in here
+		errorVal = commDevice->getPinValue(&val); // TODO: this should only have limited pins!
+		uint16_t pinValues = (uint16_t)valueIn->data[0]; // Get pin values
+		uint16_t interfacePinValues; // Will have pin values written into it
+		// Changes data for return to only have this interfaces pins
+		for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+			// If GPIO pin is high, set the bit. If low, clear the bit
+			if (((pinValues << pinBus.getPin(pin)) & 0x01)) {
+				interfacePinValues |= (0x01 << pin); // set bit
+			} else {
+				interfacePinValues &= ~(0x01 << pin); // clear bit
+			}
+		}
+		return errorVal;
 		break;
+	}
 	case VALUE_GPIO_STATE:
 		return errorVal;
 		break;

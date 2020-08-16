@@ -104,7 +104,7 @@ virtual inline uint8_t setPinMode(uint8_t pinNumber, PinMode_t pinMode){
 
 inline Device_Indexer_t getParentDeviceIndex(){
 	if (!commDeviceExists)
-		return Device_Indexer_t(DEVICE_INVALID, 0);
+		return Device_Indexer_t(DEVICE_INVALID_, 0);
 	return commDevice->getDeviceIndex();
 } // getParentDeviceIndex
 

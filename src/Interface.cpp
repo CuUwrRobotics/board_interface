@@ -7,13 +7,14 @@
 // bool commDeviceExists = false;
 // uint8_t interfaceIndex = 0xFF; // Index of the interface object
 
-bool Interface::start(Device *device, PinBus pb, Interface_Indexer_t ifaceIndex) {
+bool Interface::start(Device *device, PinBus pb, Interface_Indexer_t
+                      ifaceIndex) {
 	initerrorVal = false;
 	commDevice = device;
 	commDeviceExists = true;
 	if (getParentTypeId() != commDevice->getDeviceTypeId()) {
-		log_error("Parent type ID bad for interface %d. Expected: %s, Got: %s\n",
-		          interfaceIndex.toCharArray(),
+		log_error("Parent type ID bad for interface %s. Expected: %s, Got: %s\n",
+		          interfaceIndex.toString(),
 		          deviceIdToCharArray(getParentTypeId()),
 		          deviceIdToCharArray(commDevice->getDeviceTypeId()));
 		return false;
@@ -37,8 +38,8 @@ bool Interface::start(Device *device, PinBus pb, Interface_Indexer_t ifaceIndex)
 	if (commDevice->attachInterface(pinBus, getInterfaceTypeId())) {
 		prepareInterface(); // Set interface-specific default modes to pinBus
 		initerrorVal = true;
-	} else log_error("Interface #%d (%s) could not attatch to the parent device.",
-		               interfaceIndex.toCharArray(), getInterfaceName());
+	} else log_error("Interface %s (%s) could not attatch to the parent device.",
+		               interfaceIndex.toString(), getInterfaceName());
 	return initerrorVal;
 
 	// return true

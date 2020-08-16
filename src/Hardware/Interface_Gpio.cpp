@@ -39,7 +39,7 @@ DataError_t Interface_Gpio::readPin(PinValue_t *valueIn) {
 	case VALUE_GPIO_STATE:
 		return errorVal;
 		break;
-	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+	case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
 		return commDevice->getPinValue(&val);
 		break;
 	default:

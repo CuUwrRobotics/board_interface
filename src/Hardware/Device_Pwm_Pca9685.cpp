@@ -50,7 +50,7 @@ bool Device_Pwm_Pca9685::deviceInit(){
 
 DataError_t Device_Pwm_Pca9685::getPinValue(PinValue_t *value){
 	switch (value->fmt) {
-	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+	case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
 		// TODO: priority
 		// Stores all pins and base frequency into the array. This requires an array
 		// of length PIN_COUNT + 1.

@@ -2,6 +2,7 @@
 #define INDEXER_H
 
 #include <stdint.h>
+#include <string>
 #include "HardwareDescription.h"
 // #include <map> // Mot used here, but necesary for the maps
 // #include <utility> // TODO: do we need this?
@@ -29,8 +30,12 @@ public:
 		return false;
 	} /* step */
 
-	const char *toCharArray(){
-		return interfaceIdToCharArray(type);
+	const char *toString(){
+		std::string name;
+		name = interfaceIdToCharArray(type);
+		name += " #";
+		name += (char) ('0' + index);
+		return name.c_str();
 	} /* toCharArray */
 
 	// For inline definitions
@@ -67,8 +72,12 @@ public:
 		return false;
 	} /* step */
 
-	const char *toCharArray(){
-		return deviceIdToCharArray(type);
+	const char *toString(){
+		std::string name;
+		name = deviceIdToCharArray(type);
+		name += " #";
+		name += (char) ('0' + index);
+		return name.c_str();
 	} /* toCharArray */
 
 	Device_Indexer_t(Device_t t, uint8_t i) {

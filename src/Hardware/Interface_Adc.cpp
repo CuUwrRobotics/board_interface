@@ -36,8 +36,8 @@ void Interface_Adc::prepareInterface(){
 	cfg.data = &adcSteps; // Assigns value to adcSteps
 	errorVal = commDevice->readDeviceConfig(&cfg);
 	if (!(errorVal == ERROR_SUCCESS))
-		log_error("Interface #%d Could not get DCFG_ADC_STEPS from device: %s",
-		          interfaceIndex, errorCharArray(errorVal));
+		log_error("Interface %s Could not get DCFG_ADC_STEPS from device: %s",
+		          interfaceIndex.toString(), errorCharArray(errorVal));
 
 	// Collect the ADC AVCC voltage value
 	cfg.fmt = DCFG_ADC_AVCC_VOLTAGE;
@@ -45,8 +45,8 @@ void Interface_Adc::prepareInterface(){
 	errorVal = commDevice->readDeviceConfig(&cfg);
 	if (!(errorVal == ERROR_SUCCESS))
 		log_error(
-			"Interface #%d Could not get DCFG_ADC_AVCC_VOLTAGE from device: %s",
-			interfaceIndex, errorCharArray(errorVal));
+			"Interface %s Could not get DCFG_ADC_AVCC_VOLTAGE from device: %s",
+			interfaceIndex.toString(), errorCharArray(errorVal));
 } // prepareInterface
 
 DataError_t Interface_Adc::readPin(PinValue_t *valueIn) {

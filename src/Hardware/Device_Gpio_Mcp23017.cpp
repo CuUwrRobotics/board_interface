@@ -58,7 +58,7 @@ DataError_t Device_Gpio_Mcp23017::getPinValue(PinValue_t *value){
 		value->data[0] = ((currentPinValues >> value->pin) & 0x01);
 		return ERROR_SUCCESS;
 		break;
-	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+	case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
 		// Because data tranfrers happen with floats, and floats cannot be manipulated
 		// with hbit-shifting, we need to store bits into uinsigned integers, then
 		// convert those to floats. Thos floats must be converted back into unsinged

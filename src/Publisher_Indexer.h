@@ -46,10 +46,10 @@ public:
 			return INTF_PWR_SWITCHING;
 			break;
 		case PUB_TELEMETRY:
-			return INTF_INVALID; // No telemetry interface
+			return INTF_INVALID_; // No telemetry interface
 			break;
 		default:
-			return INTF_INVALID;
+			return INTF_INVALID_;
 			break;
 		} /* switch */
 	} /* getInterfaceType */

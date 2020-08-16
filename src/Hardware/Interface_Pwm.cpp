@@ -35,7 +35,7 @@ DataError_t Interface_Pwm::readPin(PinValue_t *valueIn) {
 
 	// Format data and return with the error/success code from device
 	switch (valueIn->fmt) {
-	case VALUE_DATA_DUMP: // Data format for dumping data over ROS messages
+	case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
 		// TODO: prioritise
 		// Conversion to duty cycle happens inside device
 		return commDevice->getPinValue(&val);

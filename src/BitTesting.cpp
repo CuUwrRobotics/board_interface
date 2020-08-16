@@ -931,8 +931,8 @@ bool testAdc(Interface *intf, Device *dev) {
 //                        std::map <Device_Indexer_t, Device *> *devices){
 // 	Interface_Indexer_t intf_i; // Stores device type and index for map array
 // 	Device_Indexer_t dev_i; // Stores device type and index for map array
-// 	dev_i.type = DEVICE_INVALID; // Start with first device
-// 	intf_i.type = INTF_INVALID; // Start with first interface
+// 	dev_i.type = DEVICE_INVALID_; // Start with first device
+// 	intf_i.type = INTF_INVALID_; // Start with first interface
 //
 // 	char SP[4] = "  "; // Spacing for the tree view
 // 	bool moreDevfLeft = true;

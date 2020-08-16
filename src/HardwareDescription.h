@@ -11,7 +11,7 @@ const static uint8_t TOTAL_DEVICES			= 8;
 const uint8_t MAX_PIN_COUNT							= 16;
 
 // Interface names
-enum Interface_t {INTF_INVALID,
+enum Interface_t {INTF_INVALID_,
 	                INTF_PWM,
 	                INTF_GPIO,
 	                INTF_ADC,
@@ -36,8 +36,8 @@ enum Interface_t {INTF_INVALID,
 
 const static char *interfaceIdToCharArray(Interface_t intf){
 	switch (intf) {
-	case INTF_INVALID:
-		return "INTF_INVALID";
+	case INTF_INVALID_:
+		return "INTF_INVALID_";
 		break;
 	case INTF_PWM:
 		return "INTF_PWM";
@@ -146,7 +146,7 @@ const static char *interfaceName(Interface_t intf){
 } /* interfaceName */
 
 // Device names
-enum Device_t {DEVICE_INVALID,
+enum Device_t {DEVICE_INVALID_,
 	             DEVICE_PWM,
 	             DEVICE_GPIO,
 	             DEVICE_ADC,
@@ -160,8 +160,8 @@ enum Device_t {DEVICE_INVALID,
 
 const static char *deviceIdToCharArray(Device_t dev){
 	switch (dev) {
-	case DEVICE_INVALID:
-		return "DEVICE_INVALID";
+	case DEVICE_INVALID_:
+		return "DEVICE_INVALID_";
 		break;
 	case DEVICE_PWM:
 		return "DEVICE_PWM";

@@ -62,8 +62,7 @@ bool PinBus::setPinModes(const PinMode_t *modes){
 // Assign a pin. Can only happen once per pin.
 bool PinBus::assignPin(uint8_t index, uint8_t pinNumber) {
 	if (pinCount == MAX_PINS + 1) {
-		log_error("'pinCount' not yet set, cannot assign pin\n",
-		          index);
+		log_error("'pinCount' not yet set, cannot assign pin\n");
 		return false;
 	}
 	// Check index

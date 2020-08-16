@@ -26,7 +26,7 @@ bool Device::init(Device_Indexer_t index, uint8_t addr, BusType_t busType, bool
                   sim_io){
 	printf("Starting %s device %s at address 0x%.2X.\n",
 	       deviceHardwareFunction(getDeviceTypeId()), getHardwareName(), addr);
-	simulate_io = sim_io;        // If IO is simulated, assign that here.
+	simulate_io = sim_io; // If IO is simulated, assign that here.
 	deviceIsSetup = false;
 	deviceIndex = index;
 	address = addr;
@@ -34,7 +34,7 @@ bool Device::init(Device_Indexer_t index, uint8_t addr, BusType_t busType, bool
 	currentPinBus.setBusType(busType);
 	// Set each pin to defaults and available for control
 	for (uint8_t i = 0; i < getPinCount(); i++) {
-		getReservedPins(i) = INTF_INVALID; // Un-reserve all pins
+		getReservedPins(i) = INTF_INVALID_; // Un-reserve all pins
 		requestedPinBus.setPinMode(i, MODE_INPUT);
 	}
 
@@ -54,23 +54,23 @@ bool Device::init(Device_Indexer_t index, uint8_t addr, BusType_t busType, bool
 bool Device::attachInterface(PinBus pinBus, Interface_t interfaceId) {
 	// Check pins and ensure they are not yet set to an interface.
 	if (!verifyPins(pinBus)) {
-		log_error("Device %d (%s): Bad pin configs; not changing modes",
-		          deviceIndex.toCharArray(), getHardwareName());
+		log_error("Device %s (%s): Bad pin configs; not changing modes",
+		          deviceIndex.toString(), getHardwareName());
 		return false;
 	}
 	if (pinBus.getBusType() != currentPinBus.getBusType()) {
-		log_error("Device %d (%s):  Request got bad bus type.",
-		          deviceIndex.toCharArray(), getHardwareName());
+		log_error("Device %s (%s):  Request got bad bus type.",
+		          deviceIndex.toString(), getHardwareName());
 		return false;
 	}
 
 	// Pins are all within range, so allow control if available
 	// For each pin
 	for (uint8_t i = 0; i < pinBus.getPinCount(); i++) {
-		if (getReservedPins(pinBus.getPin(i)) != INTF_INVALID) { // Check if pin is reserved
+		if (getReservedPins(pinBus.getPin(i)) != INTF_INVALID_) { // Check if pin is reserved
 			log_error(
-				"Device %d (%s): Got a request by %s for a pin %d reserved by %s.",
-				deviceIndex.toCharArray(), getHardwareName(),
+				"Device %s (%s): Got a request by %s for a pin %d reserved by %s.",
+				deviceIndex.toString(), getHardwareName(),
 				interfaceIdToCharArray(interfaceId), pinBus.getPin(i),
 				interfaceIdToCharArray(getReservedPins(pinBus.getPin(i))));
 			return false;

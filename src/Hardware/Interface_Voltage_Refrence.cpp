@@ -36,7 +36,7 @@ bool Interface_Voltage_Refrence::calculateValues() {
 	    knownDiodeTolerance == -99 ||
 	    knownAdcTolerance == -99 ||
 	    measureCycles < 10) {
-		log_error("Interface #%d: Data setup invalid", interfaceIndex);
+		log_error("Interface %s: Data setup invalid", interfaceIndex.toString());
 		return false; // Not enough data was set up, can't calc
 	}
 	refMeasurementAverage = 0;
@@ -52,8 +52,8 @@ bool Interface_Voltage_Refrence::calculateValues() {
 		commDevice->updateData();
 		errorVal = commDevice->getPinValue(&val); // Get the data
 		if (!(errorVal == ERROR_SUCCESS)) {
-			log_error("Interface #%d: getPinValue from commDevice failed: %s",
-			          interfaceIndex, errorCharArray(errorVal));
+			log_error("Interface #%s: Data se getPinValue from commDevice failed: %s",
+			          interfaceIndex.toString(), errorCharArray(errorVal));
 			return false;
 		}
 		refMeasurementAverage += adcMeasured;
@@ -85,8 +85,8 @@ void Interface_Voltage_Refrence::prepareInterface(){
 	cfg.data = &adcSteps; // Assigns value to adcSteps
 	errorVal = commDevice->readDeviceConfig(&cfg);
 	if (!(errorVal == ERROR_SUCCESS))
-		log_error("Interface #%d Could not get DCFG_ADC_STEPS from device: %s",
-		          interfaceIndex, errorCharArray(errorVal));
+		log_error("Interface %s Could not get DCFG_ADC_STEPS from device: %s",
+		          interfaceIndex.toString(), errorCharArray(errorVal));
 
 	// Collect the ADC AVCC voltage value
 	cfg.fmt = DCFG_ADC_AVCC_VOLTAGE;
@@ -94,8 +94,8 @@ void Interface_Voltage_Refrence::prepareInterface(){
 	errorVal = commDevice->readDeviceConfig(&cfg);
 	if (!(errorVal == ERROR_SUCCESS))
 		log_error(
-			"Interface #%d Could not get DCFG_ADC_AVCC_VOLTAGE from device: %s",
-			interfaceIndex, errorCharArray(errorVal));
+			"Interface %s Could not get DCFG_ADC_AVCC_VOLTAGE from device: %s",
+			interfaceIndex.toString(), errorCharArray(errorVal));
 } // prepareInterface
 
 DataError_t Interface_Voltage_Refrence::readPin(PinValue_t *valueIn) {

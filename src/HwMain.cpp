@@ -489,7 +489,7 @@ void calibrateAdc() {
 	float data[2] = {offsetRatio, toleranceRatio};
 	cfg.fmt = ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS; // Set format
 	cfg.data = data;
-	for (Interface_Indexer_t intf = Interface_Indexer_t(INTF_INVALID, 0);
+	for (Interface_Indexer_t intf = Interface_Indexer_t(INTF_INVALID_, 0);
 	     intf.step(); ) {
 		// Interface DNE, so don't check it
 		if (interface_qty[intf.type] == 0) { continue; }
@@ -560,51 +560,15 @@ void setupPowerLineReaders() {
 } // setupPowerLineReaders
 
 void updateAllDevices() {
-	uint8_t i = 0; // Incremented within each device type.
-	Device_Indexer_t dev; // Stores device type and index for map array
-
-	dev = Device_Indexer_t(DEVICE_GPIO, i);
-	devices[dev]->updateData();
-	i++;
-
-	// GPIO 1
-	dev = Device_Indexer_t(DEVICE_GPIO, i);
-	devices[dev]->updateData();
-	i++;
-
-	// GPIO 2 (only accessible through other interfaces, like LEAK)
-	dev = Device_Indexer_t(DEVICE_GPIO, i);
-	devices[dev]->updateData();
-	i++;
-
-	i = 0; // New device type, so restart counting
-
-	// PWM 0
-	dev = Device_Indexer_t(DEVICE_PWM, i);
-	devices[dev]->updateData();
-	i++;
-
-	// PWM 1
-	dev = Device_Indexer_t(DEVICE_PWM, i);
-	devices[dev]->updateData();
-	i++;
-
-	i = 0; // New device type, so restart counting
-
-	// ADC 0
-	dev = Device_Indexer_t(DEVICE_ADC, i);
-	devices[dev]->updateData();
-	i++;
-
-	// ADC 1
-	dev = Device_Indexer_t(DEVICE_ADC, i);
-	devices[dev]->updateData();
-	i++;
-
-	// ADC 2 (only accessible through other interfaces.)
-	dev = Device_Indexer_t(DEVICE_ADC, i);
-	devices[dev]->updateData();
-	i++;
+	Device_Indexer_t dev_i;
+	dev_i.type = DEVICE_INVALID_;
+	for ( ; dev_i.step(); ) {
+		// No device was never created of this type, so it would segfault
+		if (device_qty[dev_i.type] == 0) continue;
+		for (dev_i.index = 0; dev_i.index < device_qty[dev_i.type]; dev_i.index++) {
+			devices[dev_i]->updateData();
+		}
+	}
 } // updateDevices
 
 void startupConfig(){
@@ -625,8 +589,8 @@ void dumpConfiguration(){
 	Interface_Indexer_t intf_i; // Stores device type and index for map array
 	Interface_Indexer_t intf_temp; // For checking other interfaces when formatting
 	Device_Indexer_t dev_i; // Stores device type and index for map array
-	dev_i.type = DEVICE_INVALID; // Start with first device
-	intf_i.type = INTF_INVALID; // Start with first interface
+	dev_i.type = DEVICE_INVALID_; // Start with first device
+	intf_i.type = INTF_INVALID_; // Start with first interface
 
 	char SP[4] = "  "; // Spacing for the tree view
 	bool moreDevfLeft = true;
@@ -658,7 +622,7 @@ void dumpConfiguration(){
 			       devices[dev_i]->ready() ? GREEN :
 			       RED, devices[dev_i]->getHardwareName(),
 			       NO_COLOR);
-			for (intf_i.type = INTF_INVALID; intf_i.step(); ) {
+			for (intf_i.type = INTF_INVALID_; intf_i.step(); ) {
 				if (interface_qty[intf_i.type] == 0) {
 					// No interface was never created of this type, so it would segfault
 					continue;
@@ -839,7 +803,7 @@ void enterLoop() {
 	PinValue_t pin_value_reader; // Reads pin value
 	float data[17]; // Stores the data for all pins + one extra for PWM frequency
 	pin_value_reader.data = data; // Pointer to data
-	pin_value_reader.fmt = VALUE_DATA_DUMP; // Gets all data from all interface pins
+	pin_value_reader.fmt = VALUE_ROS_DATA_; // Gets all data from all interface pins
 	pin_value_reader.pin = 0;
 
 	uint8_t pin_i; // For iterating through devices. Kept out of loop for efficiency.
@@ -962,6 +926,7 @@ void enterLoop() {
 				break;
 			} // switch
 		}
+		updateAllDevices(); // TODO: Does this need to happen more often?
 		loop_wait.sleep();
 	}
 } // enterLoop
