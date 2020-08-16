@@ -126,6 +126,7 @@ catkin_package(
 include_directories(
   src
   src/Hardware
+  common_include
   test
   ${catkin_INCLUDE_DIRS}
 )
