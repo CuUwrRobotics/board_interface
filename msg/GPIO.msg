@@ -3,4 +3,4 @@ Header header
 # Pins configured as inputs are descirbed in gpio_XY_cfg variable.
 uint16 gpio_modes
 uint16 gpio
-uint16 gpio_rw_mask # Set a bit to write to that pin
+uint16 rw_mask # Set a bit to write to that pin

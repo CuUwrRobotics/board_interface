@@ -16,6 +16,5 @@ float32[2] current_amps_tolerance
 float32[4] power_line_volts
 float32[4] power_line_volts_tolerance
 uint8 switches # Binary output;  0000dcba, Last bit = first pin.
-uint8 leak # Binary output;  hgfedcba
 uint8 em_io # Returns binary result: 00000cba
 uint8 em_io_rw_mask # Set the corresponding bit here to 1 to write to em_io
