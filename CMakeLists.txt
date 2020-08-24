@@ -169,13 +169,16 @@ set(PINBUS
 	src/PinBus.cpp
 )
  add_executable(${PROJECT_NAME}_node src/HwMain.cpp ${PINBUS} ${INTERFACES} ${DEVICES})
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 
 
 set(BIT_TESTING
-  test/bit_testing.cpp
+  test/BitTesting.cpp
+  test/Tests.cpp
   )
 
 add_executable(bit_node ${BIT_TESTING})
+target_link_libraries(bit_node ${catkin_LIBRARIES})
 
 # 	src/PinBus.cpp
 # 	src/Device.cpp
@@ -196,7 +199,6 @@ add_executable(bit_node ${BIT_TESTING})
 # 	src/Hardware/Interface_Voltage_Refrence.cpp
 # 	src/BitTesting.cpp
 # 	)
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
