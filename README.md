@@ -71,12 +71,12 @@ By using objects to handle each device and interface, the code can stay organize
 
 This diagram shows how communication happens internally when a request to write data or configurations is recieved through ROS (or is internally triggered):
 
-![Image of the program flow for writing data](https://github.com/CuUwrRobotics/PiranhaBot-docs/blob/master/board_interface/board-interface-flowcharts-data-write-flow.png)
+![Image of the program flow for writing data](docs/board-interface-flowcharts-data-write-flow.png)
 
 Data reads follow a similar flow:
 
-![Image of the program flow for reading data](https://github.com/CuUwrRobotics/PiranhaBot-docs/blob/master/board_interface/board-interface-flowcharts-data-read-flow.png)
+![Image of the program flow for reading data](docs/board-interface-flowcharts-data-read-flow.png)
 
 And here's the main program loop: 
 
-![Image of the main program loop](https://github.com/CuUwrRobotics/PiranhaBot-docs/blob/master/board_interface/board-interface-flowcharts-main-program-flow.png)
+![Image of the main program loop](docs/board-interface-flowcharts-main-program-flow.png)
