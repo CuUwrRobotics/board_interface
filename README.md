@@ -8,15 +8,13 @@ TODO ([CuUwrRobotics/board_interface#4](https://github.com/CuUwrRobotics/board_i
 
 # How it Works
 
-This package takes data in to write and constantly publishes data that has been read. The package has two 'layers' of object types which data travels through: 
-
-The lowest level is the hardware level, called Devices. Any individual device connected to the Rasperry Pi is assigned a Device instance, which can communicate with it as needed. 
-
-The next higher level is an Interface, which is assigned to pins on a Device instance, and can control those pins. All controls happen through the interface, including any configurations and data read/writes. 
+This package was designed for orthogonality and easy reconfiguration. It has two 'layers' of object types which data travels through: 
+- The lowest layer is hardware level, called Devices. Any individual chip or 'device' connected to the Rasperry Pi is assigned a Device instance, which can communicate with it it initialize, update data, change configurations, etc.
+- The other level is the Interface, which is assigned to pins on a Device instance, and can control those pins. All external access occurs through the Interfaces.
 
 The interface handles all data covnersions and calibrartion, while the device handles all data pushing/pulling and storage.
 
-For a simple example, I will represent devices and interfaces, along iwth their pins, using YAML syntax. 
+For an example, I will represent devices and interfaces, along iwth their pins, using YAML syntax. 
 
 Two 16 pin GPIO chips with one interface each:
 ```yaml
@@ -65,9 +63,9 @@ That was pretty simple, but also fairly useless because the interface is basical
     - last-pin: 15
 ```
 
-That's more complicated, but it means that we can use any interface through an associative array - making accessing requested interfaces faster.
+That's more complicated, but it means that we can use any interface through an associative array - making accessing specific devices and interfaces much faster and easier when an event comes through.
 
-By using objects to handle each device and interface, the code can stay organized and capable of changing the configuration on the fly. For example, a new power interface can be added to any GPIO device's pin, allowing any special features in the power interface to work without interfering with other GPIO interface.
+By using objects to handle each device and interface, the code can stay organized and capable of changing the configuration on the fly. For example, a new power interface can be added to any GPIO device's pin, allowing any special features in the `power` Interface to work without interfering with other GPIO interfaces.
 
 This diagram shows how communication happens internally when a request to write data or configurations is recieved through ROS (or is internally triggered):
 
