@@ -165,7 +165,7 @@ struct DeviceConfig_t {
  */
 
 enum DataError_t {
-	ERROR_SUCCESS, /*< Nothing wrong. This MUST be first error for easier error checking */
+	ERROR_SUCCESS = 0, /*< Nothing wrong. This MUST be first error for easier error checking */
 	ERROR_GENERAL, /*< For use as placeholder */
 	ERROR_NOT_AVAIL, /*< The requested read/write format is not available for the interface */
 	ERROR_WROTE_INPUT, /*< Tried to write to a pin in input mode. */
