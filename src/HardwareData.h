@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:22 Sep 19 2020
+ */
+
 #ifndef HARDWARE_DATA_H
 #define HARDWARE_DATA_H
 
@@ -7,96 +14,96 @@
  * actually reading/writing data on a device's pin, it is a configuration.
  */
 enum DataValueFormat_t {VALUE_INVALID_, /*< Default if data never gets set. */
-	                      VALUE_ROS_DATA_, /*< Puts all pin values into the data. */
-	                      // PWM
-	                      // ===
-	                      VALUE_PWM_DUTY_100, /*< Duty cycle */
-	                      VALUE_PWM_ON_TICKS, /*< On time, in ticks, out of 4096 */
-	                      VALUE_PWM_FREQ, /*< Frequency setting */
-	                      // GPIO
-	                      // ====
-	                      VALUE_GPIO_STATE,
-	                      // ADC
-	                      // ===
-	                      VALUE_ADC_DIRECT, /*< Direct data from the ADC. Supported by any ADC based
-	                                         * interface */
-	                      VALUE_ADC_VOLTAGE, /*< Calculated voltage */
+                        VALUE_ROS_DATA_, /*< Puts all pin values into the data. */
+                        // PWM
+                        // ===
+                        VALUE_PWM_DUTY_100, /*< Duty cycle */
+                        VALUE_PWM_ON_TICKS, /*< On time, in ticks, out of 4096 */
+                        VALUE_PWM_FREQ, /*< Frequency setting */
+                        // GPIO
+                        // ====
+                        VALUE_GPIO_STATE,
+                        // ADC
+                        // ===
+                        VALUE_ADC_DIRECT, /*< Direct data from the ADC. Supported by any ADC based
+                                           * interface */
+                        VALUE_ADC_VOLTAGE, /*< Calculated voltage */
 
-	                      /** Two values:
-	                       * [0] = Measured voltage
-	                       * [1] = Tolerance in volts */
-	                      VALUE_ADC_VOLTAGE_WITH_TOLERANCE,
-	                      // CURRENT
-	                      // =======
-	                      VALUE_CURRENT_AMPS, /*< Curernt measured */
+                        /** Two values:
+                         * [0] = Measured voltage
+                         * [1] = Tolerance in volts */
+                        VALUE_ADC_VOLTAGE_WITH_TOLERANCE,
+                        // CURRENT
+                        // =======
+                        VALUE_CURRENT_AMPS, /*< Curernt measured */
 
-	                      /** Two values:
-	                       * [0] = Measured current
-	                       * [1] = Tolerance in amps */
-	                      VALUE_CURRENT_AMPS_WITH_TOLERANCE,
+                        /** Two values:
+                         * [0] = Measured current
+                         * [1] = Tolerance in amps */
+                        VALUE_CURRENT_AMPS_WITH_TOLERANCE,
 
-	                      // VOLTAGE REFRENCE
-	                      // ================
-	                      VALUE_REF_VOLTAGE_NO_CORRECT, /*< Uncorrected meaured diode voltage. */
-	                      // TEMP
-	                      // ====
+                        // VOLTAGE REFRENCE
+                        // ================
+                        VALUE_REF_VOLTAGE_NO_CORRECT, /*< Uncorrected meaured diode voltage. */
+                        // TEMP
+                        // ====
 
-	                      /** Two values:
-	                       * [0] = Measured temperature in degrees C
-	                       * [1] = Tolerance in degrees C */
-	                      VALUE_TEMP_C_WITH_TOLERANCE};
+                        /** Two values:
+                         * [0] = Measured temperature in degrees C
+                         * [1] = Tolerance in degrees C */
+                        VALUE_TEMP_C_WITH_TOLERANCE};
 
 /**
  * Defines the formats for assigning or reading interface configurations.
  */
 enum InterfaceConfigFormat_t {ICFG_INVALID_, /*< Default if data never gets set. */
-	                            // ADC
-	                            // ===
+                              // ADC
+                              // ===
 
-	                            /** When the actual level of the 5V rail is known,
-	                             * these can be used to assign it for more accurate ADC
-	                             * measurements. Meant to be set in all ADC interfaces after
-	                             * reading this value from \ref Interface_Voltage_Refrence.
-	                             * Two values:
-	                             * [0] = Ratio of (intended AVCC):(actual AVCC)
-	                             * [1] = Multiply this value by actual voltage */
-	                            ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS,
+                              /** When the actual level of the 5V rail is known,
+                               * these can be used to assign it for more accurate ADC
+                               * measurements. Meant to be set in all ADC interfaces after
+                               * reading this value from \ref Interface_Voltage_Refrence.
+                               * Two values:
+                               * [0] = Ratio of (intended AVCC):(actual AVCC)
+                               * [1] = Multiply this value by actual voltage */
+                              ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS,
 
-	                            // VOLTAGE REFRENCE
-	                            // ================
-	                            ICFG_ADC_STEPS, /*< The number of ADC steps. TODO: MOVE TO ADC DEVICE
-	                                             * */
-	                            ICFG_ADC_AVCC_VOLTAGE, /*< The intended ADC device AVCC. TODO: MOVE TO
-	                                                    * ADC DEVICE */
+                              // VOLTAGE REFRENCE
+                              // ================
+                              ICFG_ADC_STEPS, /*< The number of ADC steps. TODO: MOVE TO ADC DEVICE
+                                               * */
+                              ICFG_ADC_AVCC_VOLTAGE, /*< The intended ADC device AVCC. TODO: MOVE TO
+                                                      * ADC DEVICE */
 
-	                            /** Two values:
-	                             * [0] = Known voltage of the refrence (3V refrence ==> 3V)
-	                             * [1] = Tolerance in volts for the known value. */
-	                            ICFG_REF_KNOWN_VOLTS_WITH_TOLERANCE,
-	                            ICFG_REF_ADC_TOLERANCE, /*< Tolerance of ADC measurements
-	                                                     * TODO: MOVE TO DEVICE */
-	                            ICFG_REF_NUM_CYCLES, /*< Number of cycles to measure the
-	                                                  * refrence for an average value. Should
-	                                                  * be >= 10. */
-	                            ICFG_REF_READY, /*< Checks that voltage refrence is
-	                                             * ready. Check this prior to assigning values
-	                                             * from it, and  before any very critical
-	                                             * measurements. */
+                              /** Two values:
+                               * [0] = Known voltage of the refrence (3V refrence ==> 3V)
+                               * [1] = Tolerance in volts for the known value. */
+                              ICFG_REF_KNOWN_VOLTS_WITH_TOLERANCE,
+                              ICFG_REF_ADC_TOLERANCE, /*< Tolerance of ADC measurements
+                                                       * TODO: MOVE TO DEVICE */
+                              ICFG_REF_NUM_CYCLES, /*< Number of cycles to measure the
+                                                    * refrence for an average value. Should
+                                                    * be >= 10. */
+                              ICFG_REF_READY, /*< Checks that voltage refrence is
+                                               * ready. Check this prior to assigning values
+                                               * from it, and  before any very critical
+                                               * measurements. */
 
-	                            // POWER LINE
-	                            // ==========
+                              // POWER LINE
+                              // ==========
 
-	                            /** Two values:
-	                             * [0] = Known value of the high resistor
-	                             * [1] = Tolerance of the above value in %. If resistance
-	                             * was actually measured, this is zero. */
-	                            ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE,
+                              /** Two values:
+                               * [0] = Known value of the high resistor
+                               * [1] = Tolerance of the above value in %. If resistance
+                               * was actually measured, this is zero. */
+                              ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE,
 
-	                            /** Two values:
-	                             * [0] = Known value of the low resistor
-	                             * [1] = Tolerance of the above value in %. If resistance
-	                             * was actually measured, this is zero. */
-	                            ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE};
+                              /** Two values:
+                               * [0] = Known value of the low resistor
+                               * [1] = Tolerance of the above value in %. If resistance
+                               * was actually measured, this is zero. */
+                              ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE};
 
 /**
  * Defines the formats for assigning or reading device configurations.
@@ -105,11 +112,11 @@ enum InterfaceConfigFormat_t {ICFG_INVALID_, /*< Default if data never gets set.
  */
 
 enum DeviceConfigFormat_t {DCFG_INVALID_, /*< Default if data never gets set. */
-	                         // ADC
-	                         // ===
-	                         DCFG_ADC_STEPS, /*< The number of ADC steps.
-	                                          * */
-	                         DCFG_ADC_AVCC_VOLTAGE /*< The intended ADC device AVCC. */
+                           // ADC
+                           // ===
+                           DCFG_ADC_STEPS, /*< The number of ADC steps.
+                                            * */
+                           DCFG_ADC_AVCC_VOLTAGE /*< The intended ADC device AVCC. */
 };
 
 /**
@@ -126,9 +133,9 @@ enum DeviceConfigFormat_t {DCFG_INVALID_, /*< Default if data never gets set. */
  */
 
 struct PinValue_t {
-	DataValueFormat_t fmt; /*< The data format. */
-	uint8_t pin; /*< Where to assign the data */
-	float *data; /*< Data to pass along. While writing, this may be changed. */
+  DataValueFormat_t fmt; /*< The data format. */
+  uint8_t pin; /*< Where to assign the data */
+  float *data; /*< Data to pass along. While writing, this may be changed. */
 };
 
 /**
@@ -139,8 +146,8 @@ struct PinValue_t {
  */
 
 struct InterfaceConfig_t {
-	InterfaceConfigFormat_t fmt; /*< The data format. */
-	float *data; /*< Data to pass along. While writing, this may be changed. */
+  InterfaceConfigFormat_t fmt; /*< The data format. */
+  float *data; /*< Data to pass along. While writing, this may be changed. */
 };
 
 /**
@@ -154,8 +161,8 @@ struct InterfaceConfig_t {
  */
 
 struct DeviceConfig_t {
-	DeviceConfigFormat_t fmt; /*< The data format. */
-	float *data; /*< Data to pass along. While writing, this may be changed. */
+  DeviceConfigFormat_t fmt; /*< The data format. */
+  float *data; /*< Data to pass along. While writing, this may be changed. */
 };
 
 /**
@@ -165,50 +172,50 @@ struct DeviceConfig_t {
  */
 
 enum DataError_t {
-	ERROR_SUCCESS = 0, /*< Nothing wrong. This MUST be first error for easier error checking */
-	ERROR_GENERAL, /*< For use as placeholder */
-	ERROR_NOT_AVAIL, /*< The requested read/write format is not available for the interface */
-	ERROR_WROTE_INPUT, /*< Tried to write to a pin in input mode. */
-	ERROR_DEV_PIN_INVALID, /*< Pin was out of device pins range. */
-	ERROR_INTF_PIN_INVALID, /*< Pin was out of interface pins range. */
-	ERROR_DEV_N_READY, /*< Device was not ready yet. */
-	ERROR_INTF_N_READY, /*< Interface was not ready yet. */
-	ERROR_INVALID_DATA /*< Data for write was invalid. */
+  ERROR_SUCCESS = 0, /*< Nothing wrong. This MUST be first error for easier error checking */
+  ERROR_GENERAL, /*< For use as placeholder */
+  ERROR_NOT_AVAIL, /*< The requested read/write format is not available for the interface */
+  ERROR_WROTE_INPUT, /*< Tried to write to a pin in input mode. */
+  ERROR_DEV_PIN_INVALID, /*< Pin was out of device pins range. */
+  ERROR_INTF_PIN_INVALID, /*< Pin was out of interface pins range. */
+  ERROR_DEV_N_READY, /*< Device was not ready yet. */
+  ERROR_INTF_N_READY, /*< Interface was not ready yet. */
+  ERROR_INVALID_DATA /*< Data for write was invalid. */
 };
 
 const static char *errorCharArray(DataError_t err) {
-	switch (err) {
-	case ERROR_SUCCESS:
-		return "No error";
-		break;
-	case ERROR_GENERAL:
-		return "General error";
-		break;
-	case ERROR_NOT_AVAIL:
-		return "Data format not accepted by interface";
-		break;
-	case ERROR_WROTE_INPUT:
-		return "Tried to write to a pin in input mode";
-		break;
-	case ERROR_DEV_PIN_INVALID:
-		return "Pin was out of device pins range";
-		break;
-	case ERROR_INTF_PIN_INVALID:
-		return "Pin was out of interface pins range";
-		break;
-	case ERROR_DEV_N_READY:
-		return "Device not ready";
-		break;
-	case ERROR_INTF_N_READY:
-		return "Interface not ready";
-		break;
-	case ERROR_INVALID_DATA:
-		return "Data for write was invalid";
-		break;
-	default:
-		return "Unknown error";
-		break;
-	} /* switch */
+  switch (err) {
+  case ERROR_SUCCESS:
+    return "No error";
+    break;
+  case ERROR_GENERAL:
+    return "General error";
+    break;
+  case ERROR_NOT_AVAIL:
+    return "Data format not accepted by interface";
+    break;
+  case ERROR_WROTE_INPUT:
+    return "Tried to write to a pin in input mode";
+    break;
+  case ERROR_DEV_PIN_INVALID:
+    return "Pin was out of device pins range";
+    break;
+  case ERROR_INTF_PIN_INVALID:
+    return "Pin was out of interface pins range";
+    break;
+  case ERROR_DEV_N_READY:
+    return "Device not ready";
+    break;
+  case ERROR_INTF_N_READY:
+    return "Interface not ready";
+    break;
+  case ERROR_INVALID_DATA:
+    return "Data for write was invalid";
+    break;
+  default:
+    return "Unknown error";
+    break;
+  } /* switch */
 } /* errorCharArray */
 
 #endif /* end of include guard: HARDWARE_DATA_H */

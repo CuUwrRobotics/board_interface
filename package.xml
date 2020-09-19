@@ -1,3 +1,10 @@
+<!--
+@Author: Nick Steele <nichlock>
+@Date:   16:38 Aug 12 2020
+@Last modified by:   nichlock
+@Last modified time: 19:16 Sep 19 2020
+-->
+
 <?xml version="1.0"?>
 <package format="2">
 	<name>board_interface</name>
@@ -45,7 +52,7 @@
 	<!-- Use doc_depend for packages you need only for building documentation: -->
 	<!-- <doc_depend>doxygen</doc_depend> -->
 	<buildtool_depend>catkin</buildtool_depend>
-	
+
 	<!-- <depend>watchdog</depend> -->
 	<depend>roscpp</depend>
 	<depend>std_msgs</depend>

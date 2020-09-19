@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   9:08 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:23 Sep 19 2020
+ */
+
 #ifndef INTERFACE_PWM_H
 #define INTERFACE_PWM_H
 
@@ -42,17 +49,17 @@ public:
 
 //
 inline Interface_t getInterfaceTypeId(){
-	return interfaceTypeId;
+  return interfaceTypeId;
 } // getInterfaceTypeId
 
 //
 inline Device_t getParentTypeId(){
-	return parentDeviceTypeId;
+  return parentDeviceTypeId;
 } // getParentTypeId
 
 //
 inline uint8_t getPinCount(){
-	return PIN_COUNT;
+  return PIN_COUNT;
 } // getPinCount
 
 /* These must be changed per interface to ensure operability.

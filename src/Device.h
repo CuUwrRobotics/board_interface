@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   9:08 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:22 Sep 19 2020
+ */
+
 #ifndef DEVICE_H
 #define DEVICE_H
 
@@ -180,9 +187,9 @@ bool readableDataAvailable();
  */
 
 inline bool pinIsReadable(uint8_t pin) {
-	if (currentPinBus.getPinMode(pin) == MODE_INPUT) // If the pin is set to input
-		return true; // Then there is some readable data
-	return false; // There was no readable data
+  if (currentPinBus.getPinMode(pin) == MODE_INPUT) // If the pin is set to input
+    return true; // Then there is some readable data
+  return false; // There was no readable data
 } // readableDataAvailable
 
 /**
@@ -190,7 +197,7 @@ inline bool pinIsReadable(uint8_t pin) {
  */
 
 inline PinMode_t getPinMode(uint8_t pin){
-	return currentPinBus.getPinMode(pin);
+  return currentPinBus.getPinMode(pin);
 } // getPinModes
 
 /**
@@ -210,7 +217,7 @@ PinBus getPinBus();
  */
 
 inline bool ready(){
-	return deviceIsSetup;
+  return deviceIsSetup;
 } /* ready */
 }
 

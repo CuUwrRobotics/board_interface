@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   13:52 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:26 Sep 19 2020
+ */
+
 #ifndef HARDWARE_MESSAGES_H
 #define HARDWARE_MESSAGES_H
 

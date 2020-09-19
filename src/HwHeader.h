@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   11:31 Aug 16 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:22 Sep 19 2020
+ */
+
 #ifndef HW_HEADER
 #define HW_HEADER
 

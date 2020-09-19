@@ -1,3 +1,6 @@
+# @Author: Nick Steele <nichlock>
+# @Date:   15:24 Sep 08 2020
+
 cmake_minimum_required(VERSION 2.8.3)
 project(board_interface)
 

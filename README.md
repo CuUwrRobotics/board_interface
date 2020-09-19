@@ -1,3 +1,10 @@
+<!--
+@Author: Nick Steele <nichlock>
+@Date:   13:57 Aug 30 2020
+@Last modified by:   nichlock
+@Last modified time: 19:15 Sep 19 2020
+-->
+
 # Board Interface Package
 
 This is the main package for our hardware I/O, and was designed to go along with the board design over at [CuUwrRobotics/interface-board](https://github.com/CuUwrRobotics/interface-board).
@@ -8,13 +15,13 @@ TODO ([CuUwrRobotics/board_interface#4](https://github.com/CuUwrRobotics/board_i
 
 # How it Works
 
-This package was designed for orthogonality and easy reconfiguration. It has two 'layers' of object types which data travels through: 
+This package was designed for orthogonality and easy reconfiguration. It has two 'layers' of object types which data travels through:
 - The lowest layer is hardware level, called Devices. Any individual chip or 'device' connected to the Rasperry Pi is assigned a Device instance, which can communicate with it it initialize, update data, change configurations, etc.
 - The other level is the Interface, which is assigned to pins on a Device instance, and can control those pins. All external access occurs through the Interfaces.
 
 The interface handles all data covnersions and calibrartion, while the device handles all data pushing/pulling and storage.
 
-For an example, I will represent devices and interfaces, along iwth their pins, using YAML syntax. 
+For an example, I will represent devices and interfaces, along iwth their pins, using YAML syntax.
 
 Two 16 pin GPIO chips with one interface each:
 ```yaml
@@ -75,6 +82,6 @@ Data reads follow a similar flow:
 
 ![Image of the program flow for reading data](docs/board-interface-flowcharts-data-read-flow.png)
 
-And here's the main program loop: 
+And here's the main program loop:
 
 ![Image of the main program loop](docs/board-interface-flowcharts-main-program-flow.png)

@@ -1,3 +1,8 @@
+# @Author: Nick Steele <nichlock>
+# @Date:   12:06 Aug 15 2020
+# @Last modified by:   nichlock
+# @Last modified time: 19:25 Sep 19 2020
+
 Header header
 
 # Values are always published as a duty cycle from 0-1

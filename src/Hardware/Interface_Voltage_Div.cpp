@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:23 Sep 19 2020
+ */
+
 #include "Interface_Voltage_Div.h"
 
 // SET THESE FOR ANY NEW INTERFACE
@@ -29,25 +36,25 @@
  */
 
 bool Interface_Voltage_Div::calculateValues(){
-	float voltage;
-	DataError_t errorVal;
-	PinValue_t val;
-	// Get the voltage
-	val.fmt = VALUE_ADC_DIRECT; // Set format
-	val.pin = pinBus.getPin(0); // Go from local pin to the device pin
-	val.data = &voltage; // Uses voltage to store data
-	errorVal = commDevice->getPinValue(&val); // Get the data
-	voltage = voltage * (avccTheoretical / adcSteps) * avccOffsetRatio;
-	if (highResistor == 0 || lowResistor == 0) { // No resistors; no calcs needed
-		voltageMeasured = voltage;
-		toleranceVolts = voltage * avccOffsetToleranceRatio;
-		return true;
-	}
-	voltageMeasured = (voltage * (highResistor + lowResistor)) / lowResistor;
-	toleranceVolts = voltageMeasured * (avccOffsetToleranceRatio +
-	                                    lowResistorTolerance +
-	                                    highResistorTolerance); // Tolerance value
-	return true;
+  float voltage;
+  DataError_t errorVal;
+  PinValue_t val;
+  // Get the voltage
+  val.fmt = VALUE_ADC_DIRECT; // Set format
+  val.pin = pinBus.getPin(0); // Go from local pin to the device pin
+  val.data = &voltage; // Uses voltage to store data
+  errorVal = commDevice->getPinValue(&val); // Get the data
+  voltage = voltage * (avccTheoretical / adcSteps) * avccOffsetRatio;
+  if (highResistor == 0 || lowResistor == 0) { // No resistors; no calcs needed
+    voltageMeasured = voltage;
+    toleranceVolts = voltage * avccOffsetToleranceRatio;
+    return true;
+  }
+  voltageMeasured = (voltage * (highResistor + lowResistor)) / lowResistor;
+  toleranceVolts = voltageMeasured * (avccOffsetToleranceRatio +
+                                      lowResistorTolerance +
+                                      highResistorTolerance); // Tolerance value
+  return true;
 } // calculateValues
 
 /* These must be changed per interface to ensure operability.
@@ -58,121 +65,121 @@ bool Interface_Voltage_Div::calculateValues(){
  */
 
 void Interface_Voltage_Div::prepareInterface(){
-	pinBus.setAllPins(MODE_INPUT);
-	commDevice->setPinModes(pinBus);
-	// Get conversion values from the ADC device
-	DeviceConfig_t cfg;
-	DataError_t errorVal;
-	// Collect the ADC steps value
-	cfg.fmt = DCFG_ADC_STEPS;
-	cfg.data = &adcSteps; // Assigns value to adcSteps
-	errorVal = commDevice->readDeviceConfig(&cfg);
-	if (!(errorVal == ERROR_SUCCESS))
-		log_error("Interface %s Could not get DCFG_ADC_STEPS from device: %s",
-		          interfaceIndex.toString(), errorCharArray(errorVal));
+  pinBus.setAllPins(MODE_INPUT);
+  commDevice->setPinModes(pinBus);
+  // Get conversion values from the ADC device
+  DeviceConfig_t cfg;
+  DataError_t errorVal;
+  // Collect the ADC steps value
+  cfg.fmt = DCFG_ADC_STEPS;
+  cfg.data = &adcSteps; // Assigns value to adcSteps
+  errorVal = commDevice->readDeviceConfig(&cfg);
+  if (!(errorVal == ERROR_SUCCESS))
+    log_error("Interface %s Could not get DCFG_ADC_STEPS from device: %s",
+              interfaceIndex.toString(), errorCharArray(errorVal));
 
-	// Collect the ADC AVCC voltage value
-	cfg.fmt = DCFG_ADC_AVCC_VOLTAGE;
-	cfg.data = &avccTheoretical; // Assigns value to avccTheoretical
-	errorVal = commDevice->readDeviceConfig(&cfg);
-	if (!(errorVal == ERROR_SUCCESS))
-		log_error(
-			"Interface %s Could not get DCFG_ADC_AVCC_VOLTAGE from device: %s",
-			interfaceIndex.toString(), errorCharArray(errorVal));
+  // Collect the ADC AVCC voltage value
+  cfg.fmt = DCFG_ADC_AVCC_VOLTAGE;
+  cfg.data = &avccTheoretical; // Assigns value to avccTheoretical
+  errorVal = commDevice->readDeviceConfig(&cfg);
+  if (!(errorVal == ERROR_SUCCESS))
+    log_error(
+      "Interface %s Could not get DCFG_ADC_AVCC_VOLTAGE from device: %s",
+      interfaceIndex.toString(), errorCharArray(errorVal));
 } // prepareInterface
 
 DataError_t Interface_Voltage_Div::readPin(PinValue_t *valueIn) {
-	if (!(valueIn->pin >= 0 && valueIn->pin < PIN_COUNT))
-		return ERROR_INTF_PIN_INVALID;
+  if (!(valueIn->pin >= 0 && valueIn->pin < PIN_COUNT))
+    return ERROR_INTF_PIN_INVALID;
 
-	PinValue_t val;
-	DataError_t errorVal;
-	// Reads the pin on the device. Formatting/scaling/other data changes happen below.
-	val.fmt = VALUE_ADC_DIRECT; // Set format
-	val.pin = pinBus.getPin(valueIn->pin); // Go from local pin to the device pin
-	val.data = valueIn->data; // Uses input data to store data
-	errorVal = commDevice->getPinValue(&val); // Get the data
+  PinValue_t val;
+  DataError_t errorVal;
+  // Reads the pin on the device. Formatting/scaling/other data changes happen below.
+  val.fmt = VALUE_ADC_DIRECT; // Set format
+  val.pin = pinBus.getPin(valueIn->pin); // Go from local pin to the device pin
+  val.data = valueIn->data; // Uses input data to store data
+  errorVal = commDevice->getPinValue(&val); // Get the data
 
-	// Format data and return with the error/success code from device
-	switch (valueIn->fmt) {
-	case VALUE_ADC_DIRECT:
-		return errorVal;
-		break;
-	case VALUE_ROS_DATA_: // Also the data format for dumping data over ROS messages
-	case VALUE_ADC_VOLTAGE_WITH_TOLERANCE:
-		if (!calculateValues()) {
-			return ERROR_INTF_N_READY;
-		}
-		valueIn->data[0] = voltageMeasured;
-		valueIn->data[1] = toleranceVolts;
-		return errorVal;
-		break;
-	default:
-		return ERROR_NOT_AVAIL;
-		break;
-	} // switch
+  // Format data and return with the error/success code from device
+  switch (valueIn->fmt) {
+  case VALUE_ADC_DIRECT:
+    return errorVal;
+    break;
+  case VALUE_ROS_DATA_: // Also the data format for dumping data over ROS messages
+  case VALUE_ADC_VOLTAGE_WITH_TOLERANCE:
+    if (!calculateValues()) {
+      return ERROR_INTF_N_READY;
+    }
+    valueIn->data[0] = voltageMeasured;
+    valueIn->data[1] = toleranceVolts;
+    return errorVal;
+    break;
+  default:
+    return ERROR_NOT_AVAIL;
+    break;
+  } // switch
 } // readPin
 
 DataError_t Interface_Voltage_Div::writePin(PinValue_t *value) {
-	return ERROR_NOT_AVAIL;
+  return ERROR_NOT_AVAIL;
 } /* writePin */
 
 DataError_t Interface_Voltage_Div::writeConfig(InterfaceConfig_t *cfg) {
-	switch (cfg->fmt) {
-	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		avccOffsetRatio = cfg->data[0];
-		avccOffsetToleranceRatio = cfg->data[1];
-		return ERROR_SUCCESS;
-		break;
-	case ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE:
-		lowResistor = cfg->data[0];
-		lowResistorTolerance = cfg->data[1];
-		return ERROR_SUCCESS;
-		break;
-	case ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE:
-		highResistor = cfg->data[0];
-		highResistorTolerance = cfg->data[1];
-		return ERROR_SUCCESS;
-		break;
-	default:
-		return ERROR_NOT_AVAIL;
-		break;
-	} // switch
+  switch (cfg->fmt) {
+  case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
+    avccOffsetRatio = cfg->data[0];
+    avccOffsetToleranceRatio = cfg->data[1];
+    return ERROR_SUCCESS;
+    break;
+  case ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE:
+    lowResistor = cfg->data[0];
+    lowResistorTolerance = cfg->data[1];
+    return ERROR_SUCCESS;
+    break;
+  case ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE:
+    highResistor = cfg->data[0];
+    highResistorTolerance = cfg->data[1];
+    return ERROR_SUCCESS;
+    break;
+  default:
+    return ERROR_NOT_AVAIL;
+    break;
+  } // switch
 } // writeConfig
 
 DataError_t Interface_Voltage_Div::readConfig(InterfaceConfig_t *cfg) {
-	switch (cfg->fmt) {
-	case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
-		cfg->data[0] = avccOffsetRatio;
-		cfg->data[1] = avccOffsetToleranceRatio;
-		return ERROR_SUCCESS;
-		break;
-	case ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE:
-		cfg->data[0] = lowResistor;
-		cfg->data[1] = lowResistorTolerance;
-		return ERROR_SUCCESS;
-		break;
-	case ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE:
-		cfg->data[0] = highResistor;
-		cfg->data[1] = highResistorTolerance;
-		return ERROR_SUCCESS;
-		break;
-	default:
-		return ERROR_NOT_AVAIL;
-		break;
-	} // switch
+  switch (cfg->fmt) {
+  case ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS:
+    cfg->data[0] = avccOffsetRatio;
+    cfg->data[1] = avccOffsetToleranceRatio;
+    return ERROR_SUCCESS;
+    break;
+  case ICFG_PL_LOW_RESISTOR_WITH_TOLERANCE:
+    cfg->data[0] = lowResistor;
+    cfg->data[1] = lowResistorTolerance;
+    return ERROR_SUCCESS;
+    break;
+  case ICFG_PL_HIGH_RESISTOR_WITH_TOLERANCE:
+    cfg->data[0] = highResistor;
+    cfg->data[1] = highResistorTolerance;
+    return ERROR_SUCCESS;
+    break;
+  default:
+    return ERROR_NOT_AVAIL;
+    break;
+  } // switch
 } // readConfig
 
 DataError_t Interface_Voltage_Div::writeDeviceConfig(DeviceConfig_t *cfg) {
-	return ERROR_NOT_AVAIL;
+  return ERROR_NOT_AVAIL;
 } // writeDeviceConfig
 
 DataError_t Interface_Voltage_Div::readDeviceConfig(DeviceConfig_t *cfg) {
-	return ERROR_NOT_AVAIL;
+  return ERROR_NOT_AVAIL;
 } // readDeviceConfig
 
 uint8_t Interface_Voltage_Div::setPinMode(uint8_t pinNumber, PinMode_t pinMode){
-	ROS_INFO("setPinMode: Data cannot be written to the %s interface!",
-	         interfaceIdToCharArray(interfaceTypeId));
-	return 0;
+  ROS_INFO("setPinMode: Data cannot be written to the %s interface!",
+           interfaceIdToCharArray(interfaceTypeId));
+  return 0;
 } /* setPinMode */

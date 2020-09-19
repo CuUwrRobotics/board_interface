@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:25 Sep 19 2020
+ */
+
 #ifndef DEVICE_ADC_MCP3008_H
 #define DEVICE_ADC_MCP3008_H
 // Generic headers
@@ -59,32 +66,32 @@ float pinValues[PIN_COUNT];
 
 //
 inline uint8_t getPinCount() {
-	return PIN_COUNT;
+  return PIN_COUNT;
 } // getPinCount
 
 //
 inline Device_t getDeviceTypeId() {
-	return deviceTypeId;
+  return deviceTypeId;
 } // getDeviceTypeId
 
 //
 inline PinMode_t getValidPinModes(uint8_t i){
-	return validPinModes[i];
+  return validPinModes[i];
 } // getValidPinModes
 
 //
 inline uint8_t getValidPinModesCount(){
-	return VALID_PIN_MODE_COUNT;
+  return VALID_PIN_MODE_COUNT;
 } // getValidPinModesCount
 
 //
 inline Interface_t &getReservedPins(uint8_t i){
-	return reservedPins[i];
+  return reservedPins[i];
 } // getReservedPins
 
 //
 inline char *getHardwareName(){
-	return HARDWARE_NAME;
+  return HARDWARE_NAME;
 } // getHardwareName
 
 /* These actually drive the chip, and must be different for each device subclass.

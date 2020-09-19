@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   9:08 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:23 Sep 19 2020
+ */
+
 #ifndef BIT_TESTING_H
 #define BIT_TESTING_H
 

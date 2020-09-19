@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   9:08 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:21 Sep 19 2020
+ */
+
 /* Interface.cpp
  * Abstract class which is used to implement any interface. Interfaces are not directly controlled
  * by Raspberry
@@ -94,8 +101,8 @@ bool start(Device *device, PinBus pb, Interface_Indexer_t ifaceIndex); /* start 
  */
 
 virtual inline uint8_t setPinMode(uint8_t pinNumber, PinMode_t pinMode){
-	// Try to drive a pin in commDevice
-	return commDevice->setPinMode(pinBus.getPin(pinNumber), pinMode);
+  // Try to drive a pin in commDevice
+  return commDevice->setPinMode(pinBus.getPin(pinNumber), pinMode);
 }; /* setPinMode */
 
 /*
@@ -103,9 +110,9 @@ virtual inline uint8_t setPinMode(uint8_t pinNumber, PinMode_t pinMode){
  */
 
 inline Device_Indexer_t getParentDeviceIndex(){
-	if (!commDeviceExists)
-		return Device_Indexer_t(DEVICE_INVALID_, 0);
-	return commDevice->getDeviceIndex();
+  if (!commDeviceExists)
+    return Device_Indexer_t(DEVICE_INVALID_, 0);
+  return commDevice->getDeviceIndex();
 } // getParentDeviceIndex
 
 /*
@@ -113,7 +120,7 @@ inline Device_Indexer_t getParentDeviceIndex(){
  */
 
 inline Interface_Indexer_t getInterfaceIndex(){
-	return interfaceIndex;
+  return interfaceIndex;
 } // getParentDeviceIndex
 
 /**
@@ -121,7 +128,7 @@ inline Interface_Indexer_t getInterfaceIndex(){
  */
 
 inline PinMode_t getPinMode(uint8_t pin){
-	return commDevice->getPinMode(pinBus.getPin(pin));
+  return commDevice->getPinMode(pinBus.getPin(pin));
 } // getPinMode
 
 /**
@@ -129,7 +136,7 @@ inline PinMode_t getPinMode(uint8_t pin){
  */
 
 inline bool ready(){
-	return initerrorVal;
+  return initerrorVal;
 } // ready
 
 /**
@@ -137,7 +144,7 @@ inline bool ready(){
  */
 
 inline uint8_t getMappedDevPin(uint8_t pin){
-	return pinBus.getPin(pin);
+  return pinBus.getPin(pin);
 } // getMappedPin
 
 /**
@@ -145,7 +152,7 @@ inline uint8_t getMappedDevPin(uint8_t pin){
  */
 
 inline PinBus getPinBus() {
-	return pinBus;
+  return pinBus;
 } // getPinBus
 
 /**
@@ -153,7 +160,7 @@ inline PinBus getPinBus() {
  */
 
 inline const char *getInterfaceName() {
-	return interfaceIdToCharArray(getInterfaceTypeId());
+  return interfaceIdToCharArray(getInterfaceTypeId());
 } // getInterfaceName
 }
 
