@@ -1,3 +1,6 @@
 [submodule "ros-docker"]
 	path = ros-docker
 	url = https://github.com/CuUwrRobotics/ros-docker.git
+[submodule "catkin-setups"]
+	path = catkin-setups
+	url = https://github.com/CuUwrRobotics/catkin-setups.git
