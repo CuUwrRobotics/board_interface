@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:20 Sep 19 2020
+ */
+
 #ifndef PINBUS_H
 #define PINBUS_H
 
@@ -24,7 +31,7 @@ bool setBusType(BusType_t type);
  */
 
 inline BusType_t getBusType() {
-	return busType;
+  return busType;
 } // getBusType
 
 bool setPinCount(uint8_t count);
@@ -39,7 +46,7 @@ bool setPinMode(uint8_t pin, PinMode_t mode);
  */
 
 inline PinMode_t getPinMode(uint8_t pin) {
-	return pinModes[pin];
+  return pinModes[pin];
 } // getPinMode
 
 /**
@@ -48,7 +55,7 @@ inline PinMode_t getPinMode(uint8_t pin) {
  */
 
 inline bool setPins(const PinMode_t *modes) {
-	return (setPinModes(modes));
+  return (setPinModes(modes));
 } // setPins
 
 bool setAllPins(PinMode_t modes);
@@ -72,17 +79,17 @@ bool assignPinSet(uint8_t startPin, uint8_t endPin);
 
 // Returns the pin assignment for the pin at index
 inline uint8_t getPin(uint8_t index) {
-	return pinAssignments[index];
+  return pinAssignments[index];
 } // getPin
 
 // Returns full array of pin assignemnts
 inline uint8_t *getPins() {
-	return pinAssignments;
+  return pinAssignments;
 } // getPins
 
 // Returns full array of pin assignemnts
 inline uint8_t getPinCount() {
-	return pinCount;
+  return pinCount;
 } // getPins
 
 bool createPinBus(BusType_t busType, uint8_t pinCount);
@@ -120,32 +127,8 @@ PinMode_t pinModes[MAX_PINS] = {MODE_INVALID};
 // Set up using invalid values so these need to be assigned before starting
 uint8_t pinCount = MAX_PINS + 1;
 BusType_t busType = BUS_INVALID;
-}; // class PinBus
+} // class PinBus
 
-// class PinBus
+;
 
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// class PinBus
-
-// Sketchy
-// #include "PinBus.cpp"
 #endif /* ifndef PINBUS_H */

@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   9:08 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:25 Sep 19 2020
+ */
+
 #include "Device_Pwm_Pca9685.h"
 
 // THESE VALUES MUST BE REVIEWED ON CREATION OF EACH NEW DEVICE SUBCLASS
@@ -38,42 +45,42 @@
  */
 
 bool Device_Pwm_Pca9685::deviceInit(){
-	// Init chip here
+  // Init chip here
 
-	// Default modes and states assigned here
+  // Default modes and states assigned here
 
-	pinModeChangePending = true;
-	writeDataPending = true;
-	updateData();
-	return true;
+  pinModeChangePending = true;
+  writeDataPending = true;
+  updateData();
+  return true;
 } /* deviceInit */
 
 DataError_t Device_Pwm_Pca9685::getPinValue(PinValue_t *value){
-	switch (value->fmt) {
-	case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
-		// TODO: priority
-		// Stores all pins and base frequency into the array. This requires an array
-		// of length PIN_COUNT + 1.
-		// This is the only time when it is appropriate to have a conversion in the
-		// device! It's only here for efficiency
-		for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
-			value->data[pin] = (currentPinTicks[value->pin] / (MAX_PWM_TICKS / 100));
-		}
-		value->data[16] = currentFrequencyValue;
-		return ERROR_SUCCESS;
-		break;
-	case VALUE_PWM_FREQ:
-		value->data[0] = currentFrequencyValue;
-		return ERROR_SUCCESS;
-		break;
-	case VALUE_PWM_ON_TICKS:
-		value->data[0] = currentPinTicks[value->pin];
-		return ERROR_SUCCESS;
-		break;
-	default:
-		return ERROR_NOT_AVAIL;
-		break;
-	} // switch
+  switch (value->fmt) {
+  case VALUE_ROS_DATA_: // Data format for dumping data over ROS messages
+    // TODO: priority
+    // Stores all pins and base frequency into the array. This requires an array
+    // of length PIN_COUNT + 1.
+    // This is the only time when it is appropriate to have a conversion in the
+    // device! It's only here for efficiency
+    for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+      value->data[pin] = (currentPinTicks[value->pin] / (MAX_PWM_TICKS / 100));
+    }
+    value->data[16] = currentFrequencyValue;
+    return ERROR_SUCCESS;
+    break;
+  case VALUE_PWM_FREQ:
+    value->data[0] = currentFrequencyValue;
+    return ERROR_SUCCESS;
+    break;
+  case VALUE_PWM_ON_TICKS:
+    value->data[0] = currentPinTicks[value->pin];
+    return ERROR_SUCCESS;
+    break;
+  default:
+    return ERROR_NOT_AVAIL;
+    break;
+  } // switch
 } // getPinValue
 
 /**
@@ -85,35 +92,35 @@ DataError_t Device_Pwm_Pca9685::getPinValue(PinValue_t *value){
  */
 
 DataError_t Device_Pwm_Pca9685::setPinValue(PinValue_t *value) {
-	if (!(value->pin >= 0 && value->pin < PIN_COUNT))
-		return ERROR_DEV_PIN_INVALID;
-	// Don't flag for a data write if no changes are made.
-	if (value->fmt == VALUE_PWM_FREQ) {
-		if (value->data[0] == currentFrequencyValue) {
-			return ERROR_SUCCESS;
-		}	else {
-			requestedFrequencyValue = value->data[0];
-			writeDataPending = true;
-			return ERROR_SUCCESS;
-		}
-	} else if (value->fmt == VALUE_PWM_ON_TICKS) {
-		if (value->data[0] == requestedPinTicks[value->pin]) {
-			return ERROR_SUCCESS;
-		}	else {
-			requestedPinTicks[value->pin] = value->data[0];
-			writeDataPending = true;
-			return ERROR_SUCCESS;
-		}
-	}
-	return ERROR_NOT_AVAIL;
+  if (!(value->pin >= 0 && value->pin < PIN_COUNT))
+    return ERROR_DEV_PIN_INVALID;
+  // Don't flag for a data write if no changes are made.
+  if (value->fmt == VALUE_PWM_FREQ) {
+    if (value->data[0] == currentFrequencyValue) {
+      return ERROR_SUCCESS;
+    }	else {
+      requestedFrequencyValue = value->data[0];
+      writeDataPending = true;
+      return ERROR_SUCCESS;
+    }
+  } else if (value->fmt == VALUE_PWM_ON_TICKS) {
+    if (value->data[0] == requestedPinTicks[value->pin]) {
+      return ERROR_SUCCESS;
+    }	else {
+      requestedPinTicks[value->pin] = value->data[0];
+      writeDataPending = true;
+      return ERROR_SUCCESS;
+    }
+  }
+  return ERROR_NOT_AVAIL;
 } // setPinValue
 
 DataError_t Device_Pwm_Pca9685::writeDeviceConfig(DeviceConfig_t *cfg) {
-	return ERROR_NOT_AVAIL;
+  return ERROR_NOT_AVAIL;
 } // writeDeviceConfig
 
 DataError_t Device_Pwm_Pca9685::readDeviceConfig(DeviceConfig_t *cfg) {
-	return ERROR_NOT_AVAIL;
+  return ERROR_NOT_AVAIL;
 } // readDeviceConfig
 
 /**
@@ -125,30 +132,30 @@ DataError_t Device_Pwm_Pca9685::readDeviceConfig(DeviceConfig_t *cfg) {
  */
 
 bool Device_Pwm_Pca9685::updateData(){
-	if (!ready())
-		return false;
-	if (!simulate_io) {
-		log_info("%s updating (TODO).", HARDWARE_NAME);
-		return true;
-	} else {
-		// Check if any pins need their modes changed
-		if (pinModeChangePending) {
-			for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
-				currentPinBus.setPinMode(pin, requestedPinBus.getPinMode(pin));
-			}
-			pinModeChangePending = false;
-		}
-		// Check if any data needs to be written. If so, write it.
-		if (writeDataPending) {
-			float pinValuesToSend[PIN_COUNT] = {0};
-			// For each pin, write the value over.
-			for (uint8_t pin = 0; pin < PIN_COUNT; pin++) { // For each pin
-				pinValuesToSend[pin] = requestedPinTicks[pin]; // Pin is set up for write, so
-				currentPinTicks[pin] = requestedPinTicks[pin];
-				currentFrequencyValue = requestedFrequencyValue;
-			}
-			writeDataPending = false;
-		}
-		return true;
-	}
+  if (!ready())
+    return false;
+  if (!simulate_io) {
+    log_info("%s updating (TODO).", HARDWARE_NAME);
+    return true;
+  } else {
+    // Check if any pins need their modes changed
+    if (pinModeChangePending) {
+      for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+        currentPinBus.setPinMode(pin, requestedPinBus.getPinMode(pin));
+      }
+      pinModeChangePending = false;
+    }
+    // Check if any data needs to be written. If so, write it.
+    if (writeDataPending) {
+      float pinValuesToSend[PIN_COUNT] = {0};
+      // For each pin, write the value over.
+      for (uint8_t pin = 0; pin < PIN_COUNT; pin++) { // For each pin
+        pinValuesToSend[pin] = requestedPinTicks[pin]; // Pin is set up for write, so
+        currentPinTicks[pin] = requestedPinTicks[pin];
+        currentFrequencyValue = requestedFrequencyValue;
+      }
+      writeDataPending = false;
+    }
+    return true;
+  }
 } // updateData

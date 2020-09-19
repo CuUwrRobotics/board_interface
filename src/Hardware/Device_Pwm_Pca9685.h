@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:25 Sep 19 2020
+ */
+
 #ifndef DEVICE_PWM_PCA9685_H
 #define DEVICE_PWM_PCA9685_H
 // Generic headers
@@ -56,33 +63,33 @@ float requestedFrequencyValue;
 
 //
 inline uint8_t getPinCount() {
-	return PIN_COUNT;
-}  // getPinCount
+  return PIN_COUNT;
+} // getPinCount
 
 //
 inline Device_t getDeviceTypeId() {
-	return deviceTypeId;
-}  // getDeviceTypeId
+  return deviceTypeId;
+} // getDeviceTypeId
 
 //
 inline PinMode_t getValidPinModes(uint8_t i){
-	return validPinModes[i];
-}  // getValidPinModes
+  return validPinModes[i];
+} // getValidPinModes
 
 //
 inline uint8_t getValidPinModesCount(){
-	return VALID_PIN_MODE_COUNT;
-}  // getValidPinModesCount
+  return VALID_PIN_MODE_COUNT;
+} // getValidPinModesCount
 
 //
 inline Interface_t &getReservedPins(uint8_t i){
-	return reservedPins[i];
-}  // getReservedPins
+  return reservedPins[i];
+} // getReservedPins
 
 //
 inline char *getHardwareName(){
-	return HARDWARE_NAME;
-}  // getHardwareName
+  return HARDWARE_NAME;
+} // getHardwareName
 
 /* These actually drive the chip, and must be different for each device subclass.
  ******************************************************************************/

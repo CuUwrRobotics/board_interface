@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:26 Sep 19 2020
+ */
+
 #ifndef CONSOLE_COLORS_H
 #define CONSOLE_COLORS_H
 

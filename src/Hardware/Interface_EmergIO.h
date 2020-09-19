@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   9:08 Aug 15 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:24 Sep 19 2020
+ */
+
 #ifndef INTERFACE_EMERG_IO_H
 #define INTERFACE_EMERG_IO_H
 
@@ -36,18 +43,18 @@ public:
 
 //
 inline Interface_t getInterfaceTypeId(){
-	return interfaceTypeId;
-}  // getInterfaceTypeId
+  return interfaceTypeId;
+} // getInterfaceTypeId
 
 //
 inline Device_t getParentTypeId(){
-	return parentDeviceTypeId;
-}  // getParentTypeId
+  return parentDeviceTypeId;
+} // getParentTypeId
 
 //
 inline uint8_t getPinCount(){
-	return PIN_COUNT;
-}  // getPinCount
+  return PIN_COUNT;
+} // getPinCount
 
 /* These must be changed per interface to ensure operability.
  *****************************************************************************/

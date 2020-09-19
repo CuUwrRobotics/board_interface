@@ -1,3 +1,10 @@
+/**
+ * @Author: Nick Steele <nichlock>
+ * @Date:   16:38 Aug 12 2020
+ * @Last modified by:   nichlock
+ * @Last modified time: 19:22 Sep 19 2020
+ */
+
 // =============== INTERFACES ===============
 // The numbers that refer to different types of interfaces.
 #define INTF_PWM 0
@@ -78,17 +85,18 @@
 
 // =============== ERROR TYPES ===============
 // WARNING: OUTDATED
+
 /* Any request that does not succeed will recieve a negative number in place of
  * its regular return value. This table refers to the error types.
  * Some errors are given only when a request is first made, some are given when
  * an attempt is made to control a pin that was already succesfully requested.
  * Also:
  * Input read errors: A problem reading the input of a device. Data was recieved, but something is
- *wrong with it.
+ * wrong with it.
  * Hardware errors: These are related to communicating with the hardware device, and indicate that
- *somthing is wrong with the hardware node or the board.
-//
-*/
+ * somthing is wrong with the hardware node or the board.
+ * //
+ */
 // // First request errors
 // #define ERR_PIN_IN_USE
 // #define ERR_REQ_DOES_NOT_MATCH_CFG
@@ -104,9 +112,10 @@
 // #define ERR_IF_COMM             // Communication with interface failed.
 // // Generic errors
 // #define ERR_STOPPED             // Emergency stop was called; the request will be processed, but
-// 	                              // will not be used yet.
-// #define ERR_GENERAL             // Hardware control node is running, but something's wrong with it
-// 	                              // (maybe config).
+//                                // will not be used yet.
+// #define ERR_GENERAL             // Hardware control node is running, but something's wrong with
+// it
+//                                // (maybe config).
 
 // =============== INFO REQUESTS ===============
 
