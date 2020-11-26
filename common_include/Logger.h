@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   16:38 Aug 12 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:26 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 12:54 Nov 26 2020
  */
 
 /** Use these logger functions to print the source of the message.
@@ -21,17 +21,32 @@
 
 #define log_info(a, ...) \
   ROS_INFO("Internal Message: " a " [from %s (in %s:%d)]\n" \
-           __VA_OPT__(, ) __VA_ARGS__,  \
+           , __VA_ARGS__,  \
            __FUNCTION__, __FILE__, __LINE__)
 
 #define log_warn(a, ...) \
   ROS_WARN("Internal Warning: " a " [from %s (in %s:%d)]\n" \
-           __VA_OPT__(, ) __VA_ARGS__,  \
+           , __VA_ARGS__,  \
            __FUNCTION__, __FILE__, __LINE__)
 
 #define log_error(a, ...) \
   ROS_ERROR("Internal Error: " a " [from %s (in %s:%d)]\n" \
-            __VA_OPT__(, ) __VA_ARGS__,  \
+            , __VA_ARGS__,  \
+            __FUNCTION__, __FILE__, __LINE__)
+
+#define log_info_nargs(a) \
+  ROS_INFO("Internal Message: " a " [from %s (in %s:%d)]\n" \
+           ,  \
+           __FUNCTION__, __FILE__, __LINE__)
+
+#define log_warn_nargs(a) \
+  ROS_WARN("Internal Warning: " a " [from %s (in %s:%d)]\n" \
+           ,  \
+           __FUNCTION__, __FILE__, __LINE__)
+
+#define log_error_nargs(a) \
+  ROS_ERROR("Internal Error: " a " [from %s (in %s:%d)]\n" \
+            ,  \
             __FUNCTION__, __FILE__, __LINE__)
 
 #endif /* end of include guard: LOGGER_H */

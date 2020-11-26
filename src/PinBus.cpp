@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   16:38 Aug 12 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:21 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 12:56 Nov 26 2020
  */
 
 /* Handles information for sets or pins, at least 1, at most 16.
@@ -18,7 +18,7 @@
 
 bool PinBus::setPinMode(uint8_t index, PinMode_t mode){
   if (mode == MODE_INVALID) {
-    log_error("Invalid mode selected\n");
+    log_error_nargs("Invalid mode selected\n");
     return false;
   }
   if (!(index < 0 || index > MAX_PINS)) {
@@ -37,7 +37,7 @@ bool PinBus::setPinMode(uint8_t index, PinMode_t mode){
 
 bool PinBus::setAllPins(PinMode_t mode) {
   if (pinCount == MAX_PINS + 1) {
-    log_error("Pin count not yet set, can't assign modes.\n");
+    log_error_nargs("Pin count not yet set, can't assign modes.\n");
     return false;
   }
   for (uint8_t i = 0; i < pinCount; i++) {
@@ -53,7 +53,7 @@ bool PinBus::setAllPins(PinMode_t mode) {
 
 bool PinBus::setPinModes(const PinMode_t *modes){
   if (pinCount == MAX_PINS + 1) {
-    log_error("Pin count not yet set, can't assign modes.\n");
+    log_error_nargs("Pin count not yet set, can't assign modes.\n");
     return false;
   }
   for (uint8_t i = 0; i < pinCount; i++) {
@@ -69,7 +69,7 @@ bool PinBus::setPinModes(const PinMode_t *modes){
 // Assign a pin. Can only happen once per pin.
 bool PinBus::assignPin(uint8_t index, uint8_t pinNumber) {
   if (pinCount == MAX_PINS + 1) {
-    log_error("'pinCount' not yet set, cannot assign pin\n");
+    log_error_nargs("'pinCount' not yet set, cannot assign pin\n");
     return false;
   }
   // Check index
@@ -106,7 +106,7 @@ bool PinBus::assignPins(uint8_t *pinNumbers, uint8_t pinNumbersLength){
  */
 bool PinBus::assignPinSet(uint8_t startPin, uint8_t endPin) {
   if (startPin > endPin) {
-    log_error("Start value cannot be morethan end\n");
+    log_error_nargs("Start value cannot be morethan end\n");
     return false;
   }
   uint8_t newPinCount = (endPin - startPin) + 1; // Get a new pin count
@@ -114,13 +114,13 @@ bool PinBus::assignPinSet(uint8_t startPin, uint8_t endPin) {
   if (pinCount == MAX_PINS + 1) {
     // Verify the new pin count
     if (newPinCount <= 0 || newPinCount > MAX_PINS) {
-      log_error("Bad pin count computed from start/end values\n");
+      log_error_nargs("Bad pin count computed from start/end values\n");
       return false;
     }
     pinCount = newPinCount;
     // return true;
   }	else if (pinCount != newPinCount) {
-    log_error(
+    log_error_nargs(
       "Pin count computed from start / end values does not match preset pin count\n");
     return false;
   }
@@ -138,7 +138,7 @@ bool PinBus::assignPinSet(uint8_t startPin, uint8_t endPin) {
 
 bool PinBus::setBusType(BusType_t type) {
   if (busType != BUS_INVALID) {
-    log_error("Bus type already assigned!\n");
+    log_error_nargs("Bus type already assigned!\n");
     return false;
   }
   busType = type;
@@ -152,7 +152,7 @@ bool PinBus::setBusType(BusType_t type) {
 
 bool PinBus::setPinCount(uint8_t count) {
   if (pinCount != MAX_PINS + 1) {
-    log_error("Pin count already assigned!\n");
+    log_error_nargs("Pin count already assigned!\n");
     return false;
   }
   if (!(count < 0 || count > MAX_PINS)) {

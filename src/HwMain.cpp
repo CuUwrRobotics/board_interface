@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   13:37 Sep 05 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:22 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 13:01 Nov 26 2020
  */
 
 /**
@@ -435,11 +435,11 @@ void calibrateAdc() {
   Interface_Indexer_t vrefIndex = Interface_Indexer_t(INTF_VREF, 0);
 
   if (interface_qty[vrefIndex.type] == 0)
-    log_error(
+    log_error_nargs(
       "NO VREF interfaces detected! Nominal values will be chosen. (TODO?)");
 
   if (interface_qty[vrefIndex.type] > 1)
-    log_error(
+    log_error_nargs(
       "Multiple VREF interfaces detected. The code is currently able to use only one, so it will use VREF[0]");
 
   // First, set the truth values.
@@ -454,7 +454,7 @@ void calibrateAdc() {
   cfg.data = &refReady;
   interfaces[vrefIndex]->readConfig(&cfg);
   if (!refReady) {
-    log_error("VREF Interface did not give ready, cannot calibrate!\n");
+    log_error_nargs("VREF Interface did not give ready, cannot calibrate!\n");
     return;
   }
   cfg.fmt = ICFG_ADC_OFFSET_AND_TOLERANCE_RATIOS; // Set format
@@ -523,7 +523,7 @@ void setupPowerLineReaders() {
 
   // Prevent SEGFAULTS
   if (interface_qty[vDiv_i.type] == 0) {
-    log_error("No voltage divider interfaces found.");
+    log_error_nargs("No voltage divider interfaces found.");
     return;
   }
 
@@ -716,15 +716,15 @@ void readCommands(int argc, char *argv[]) {
 
   // Simulated Hardware
   if (!simulate_hw)
-    log_info("--sim not specified, not simulating hardware.");
+    log_info_nargs("--sim not specified, not simulating hardware.");
   else
-    log_info("Simulating I/O, no hardware will be used.");
+    log_info_nargs("Simulating I/O, no hardware will be used.");
 
   // Bit testing
   if (!use_bit_test)
-    log_info("--test not specified, not running built in tests.");
+    log_info_nargs("--test not specified, not running built in tests.");
   else
-    log_warn(
+    log_warn_nargs(
       "Using BIT tests. WARNING: DISCONNECT ALL HARDWARE FROM THE BOARD BEFORE PROCEDING!");
 } // readCommands
 

@@ -1,11 +1,10 @@
 <!--
 @Author: Nick Steele <nichlock>
 @Date:   16:38 Aug 12 2020
-@Last modified by:   nichlock
-@Last modified time: 19:16 Sep 19 2020
+@Last modified by:   Nick Steele
+@Last modified time: 12:43 Nov 26 2020
 -->
 
-<?xml version="1.0"?>
 <package format="2">
 	<name>board_interface</name>
 	<version>0.0.0</version>

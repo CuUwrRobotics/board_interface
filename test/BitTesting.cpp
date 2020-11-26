@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   10:53 Aug 15 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:17 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 13:00 Nov 26 2020
  */
 
 #include "BitTesting.h"
@@ -32,7 +32,7 @@ int main(int argc, char const *argv[]) {
   if (!test::adc(1)) testFailed = true;
 
   if (testFailed) {
-    log_error("Tests have failed!");
+    log_error_nargs("Tests have failed!");
     exit(EXIT_FAILURE);
   }
   printf("%sAll BIT tests successful :)%s\n", GREEN, NO_COLOR);
