@@ -1,10 +1,3 @@
-<!--
-@Author: Nick Steele <nichlock>
-@Date:   16:38 Aug 12 2020
-@Last modified by:   Nick Steele
-@Last modified time: 12:43 Nov 26 2020
--->
-
 <package format="2">
 	<name>board_interface</name>
 	<version>0.0.0</version>
@@ -55,6 +48,7 @@
 	<!-- <depend>watchdog</depend> -->
 	<depend>roscpp</depend>
 	<depend>std_msgs</depend>
+	<depend>arduino_port_lib</depend>
 
 	<!-- The export tag contains other, unspecified, tags -->
 	<export>

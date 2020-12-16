@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   14:15 Aug 15 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:20 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 16:52 Dec 15 2020
  */
 
 #ifndef PUBLISHERS_H
@@ -61,7 +61,7 @@ public:
     } /* switch */
   } /* getInterfaceType */
 
-  std::string getTopicName(){
+  std::string getTopicName(bool as_input = false){
     std::string topic_name = "";
     char index_char = 0;
     switch (type) {
@@ -89,6 +89,9 @@ public:
     } /* switch */
     index_char = '0' + index;
     topic_name += index_char;
+    if (as_input) {
+      topic_name += "_in";
+    }
     return topic_name;
   } /* toCharArray */
 

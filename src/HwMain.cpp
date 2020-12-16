@@ -2,7 +2,7 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   13:37 Sep 05 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 13:01 Nov 26 2020
+ * @Last modified time: 13:36 Dec 16 2020
  */
 
 /**
@@ -30,6 +30,8 @@ std::map <Device_t, uint8_t> device_qty;
 
 std::map <Publisher_Indexer_t, ros::Publisher> publishers;
 std::map <Publisher_t, uint8_t> publisher_qty;
+
+std::map <Publisher_Indexer_t, ros::Subscriber> subscribers;
 
 // Tells devices if the hardware is actually connected or if it should be faked
 bool simulate_hw = false;
@@ -96,42 +98,42 @@ void createAndInitDevices(){
 
   // GPIO 0
   createDevice(DEVICE_GPIO, new Device_Gpio_Mcp23017(), BUS_GPIO,
-               DEVICE_ADDRESS + i);
+               GPIO_0_ADDR);
   i++;
 
   // GPIO 1
   createDevice(DEVICE_GPIO, new Device_Gpio_Mcp23017(), BUS_GPIO,
-               DEVICE_ADDRESS + i);
+               GPIO_1_ADDR);
   i++;
 
   // GPIO 2 (only accessible through other interfaces, like LEAK)
   createDevice(DEVICE_GPIO, new Device_Gpio_Mcp23017(), BUS_GPIO,
-               DEVICE_ADDRESS + i);
+               GPIO_2_ADDR);
   i++;
 
   // PWM 0
   createDevice(DEVICE_PWM, new Device_Pwm_Pca9685(), BUS_PWM,
-               DEVICE_ADDRESS + i);
+               PWM_0_ADDR);
   i++;
 
   // PWM 1
   createDevice(DEVICE_PWM, new Device_Pwm_Pca9685(), BUS_PWM,
-               DEVICE_ADDRESS + i);
+               PWM_1_ADDR);
   i++;
 
   // ADC 0
   createDevice(DEVICE_ADC, new Device_Adc_Mcp3008(), BUS_ADC,
-               DEVICE_ADDRESS + i);
+               ADC_0_SPI_CS_PIN);
   i++;
 
   // ADC 1
   createDevice(DEVICE_ADC, new Device_Adc_Mcp3008(), BUS_ADC,
-               DEVICE_ADDRESS + i);
+               ADC_1_SPI_CS_PIN);
   i++;
 
   // ADC 2 (only accessible through other interfaces.)
   createDevice(DEVICE_ADC, new Device_Adc_Mcp3008(), BUS_ADC,
-               DEVICE_ADDRESS + i);
+               ADC_2_SPI_CS_PIN);
   i++;
 
   // variable value must be changed if this is true
@@ -483,7 +485,7 @@ void calibrateAdc() {
   toleranceAtAvcc = toleranceRatio * avccActual;
   printf("\tOffset ratio          \t  = %s%5.2f%s\t±%s%4.2f%s\n",
          WHITE, offsetRatio, NO_COLOR,
-         WHITE, toleranceRatio * 100, NO_COLOR);
+         WHITE, toleranceRatio * 100, NO_COLOR); // TODO: check this
   printf("\t%sAt measured %s%5.2f%sV actual = %s%5.2f%sV\t±%s%.2f%sV\n",
          NO_COLOR, // Text color
          WHITE, avccTheoretical, NO_COLOR,
@@ -569,7 +571,7 @@ void updateAllDevices() {
   Device_Indexer_t dev_i;
   dev_i.type = DEVICE_INVALID_;
   for ( ; dev_i.step(); ) {
-    // No device was never created of this type, so it would segfault
+    // If no device was never created of this type, it would segfault, so just return
     if (device_qty[dev_i.type] == 0) continue;
     for (dev_i.index = 0; dev_i.index < device_qty[dev_i.type]; dev_i.index++) {
       devices[dev_i]->updateData();
@@ -728,21 +730,10 @@ void readCommands(int argc, char *argv[]) {
       "Using BIT tests. WARNING: DISCONNECT ALL HARDWARE FROM THE BOARD BEFORE PROCEDING!");
 } // readCommands
 
-void enterLoop() {
-  // Connect ROS
-  printf("Starting up ROS.\n");
-  // Start ROS and get the node instance
-  ros::NodeHandle nd;
-  // Print the node name
-  std::string nodeName = ros::this_node::getName();
-  printf("Node name: %s\n", nodeName.c_str());
-
-  // Set how many publishers to create
-
+void createPublishersAndSubscribers(ros::NodeHandle nd){
   // Set up the message publishers
   Publisher_Indexer_t pub;
   std::string topic_name = "";
-  char index_number = 0;
   // For each type of publisher
   for (pub.type = PUB_INVALID; pub.step(); ) {
     publisher_qty[pub.type] = interface_qty[pub.getInterfaceType()];
@@ -766,6 +757,15 @@ void enterLoop() {
       case PUB_PWM:
         publishers[pub] =
           nd.advertise <board_interface::pwm> (topic_name.c_str(), 0);
+        if (pub.index == 0)
+          subscribers[pub] = nd.subscribe(pub.getTopicName(true).c_str(),
+                                          0,
+                                          callbacks::pwm0);
+        if (pub.index == 1)
+          subscribers[pub] = nd.subscribe(pub.getTopicName(true).c_str(),
+                                          0,
+                                          callbacks::pwm1);
+        printf("\tSubscription topic: %s\n", pub.getTopicName(true).c_str());
         break;
       case PUB_ADC:
         publishers[pub] =
@@ -787,10 +787,23 @@ void enterLoop() {
       } // switch
     }
   }
+} // createPublishersAndSubscribers
+
+void enterLoop() {
+  // Connect ROS
+  printf("Starting up ROS.\n");
+  // Start ROS and get the node instance
+  ros::NodeHandle nd;
+  // Print the node name
+  std::string nodeName = ros::this_node::getName();
+  printf("Node name: %s\n", nodeName.c_str());
+
+  // Set how many publishers to create
+  createPublishersAndSubscribers(nd);
   // ros::Publisher gpio_publisher[3];
 // gpio_publisher[0] = nd.advertise <board_interface::gpio> ("gpio_0", 0);
-  // Allows for a 1 second delay between messages
-  ros::Duration loop_wait(1);
+  // Allows for a delay between messages
+  ros::Duration loop_wait(ROS_MESSAGE_DELAY_TIME);
   // For storing messages temporarily
   board_interface::gpio gpio_msg;
   board_interface::pwm pwm_msg;
@@ -804,6 +817,7 @@ void enterLoop() {
   power_msg.rw_mask = 0;
   telemetry_msg.em_io_rw_mask = 0;
 
+  Publisher_Indexer_t pub;
   // These will be used to access the interfaces and their data
   Interface_Indexer_t intf_i;
   PinValue_t pin_value_reader; // Reads pin value
@@ -815,7 +829,7 @@ void enterLoop() {
   uint8_t pin_i; // For iterating through devices. Kept out of loop for efficiency.
 
   while (ros::ok()) {
-    // Update data (is done in the switch)
+    // For each publisher type, starting from zero (=PUB_INVALID)
     for (pub.type = PUB_INVALID; pub.step(); ) {
       publisher_qty[pub.type] = interface_qty[pub.getInterfaceType()];
       if (pub.type == PUB_TELEMETRY)
@@ -829,7 +843,7 @@ void enterLoop() {
 
       // Publish data, based on the type to use
       switch (pub.type) {
-      case PUB_GPIO: // Pet the dog
+      case PUB_GPIO:
         // For each interface that needs publishing
         for (pub.index = 0; pub.index < publisher_qty[pub.type];
              pub.index++) {
@@ -933,6 +947,7 @@ void enterLoop() {
       } // switch
     }
     updateAllDevices(); // TODO: Does this need to happen more often?
+    ros::spinOnce();
     loop_wait.sleep();
   }
 } // enterLoop

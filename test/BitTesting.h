@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   10:54 Aug 15 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:19 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 17:22 Dec 15 2020
  */
 
 #ifndef BIT_TESTING_H
@@ -16,7 +16,7 @@
 #include "ConsoleColors.h"
 
 namespace test {
-bool pwm(uint8_t index, bool direction);
+bool pwm(uint8_t index, ros::NodeHandle n);
 
 bool gpio(uint8_t index);
 

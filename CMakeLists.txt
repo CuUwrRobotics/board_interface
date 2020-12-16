@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   genmsg
   std_msgs
+  arduino_port_lib
   # watchdog
 )
 
@@ -116,6 +117,7 @@ catkin_package(
  CATKIN_DEPENDS
  roscpp
  std_msgs
+ arduino_port_lib
  # watchdog
 #  DEPENDS system_lib
 )
@@ -171,8 +173,8 @@ set(INTERFACES
 set(PINBUS
 	src/PinBus.cpp
 )
- add_executable(${PROJECT_NAME}_node src/HwMain.cpp ${PINBUS} ${INTERFACES} ${DEVICES})
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
+ add_executable(${PROJECT_NAME}_node src/HwMain.cpp src/Subscriber_Callbacks.cpp ${PINBUS} ${INTERFACES} ${DEVICES})
+target_link_libraries(${PROJECT_NAME}_node arduino_port_wire ${catkin_LIBRARIES})
 
 
 set(BIT_TESTING

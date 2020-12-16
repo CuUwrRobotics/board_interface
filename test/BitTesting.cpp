@@ -2,17 +2,23 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   10:53 Aug 15 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 13:00 Nov 26 2020
+ * @Last modified time: 18:22 Dec 15 2020
  */
 
 #include "BitTesting.h"
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
+  printf("start\n");
+  ros::init(argc, argv, "board_interface_bit_tester",
+            ros::init_options::NoSigintHandler);
+  ros::NodeHandle n;
+  while (!ros::ok()) {
+    printf("waiting for ros\n");
+    usleep(2000000);
+  }
   bool testFailed = false;
-  if (!test::pwm(0, true)) testFailed = true;
-  if (!test::pwm(0, false)) testFailed = true;
-  if (!test::pwm(1, true)) testFailed = true;
-  if (!test::pwm(1, false)) testFailed = true;
+  if (!test::pwm(0, n)) testFailed = true;
+  if (!test::pwm(1, n)) testFailed = true;
 
   if (!test::gpio(0)) testFailed = true;
   if (!test::gpio(1)) testFailed = true;
