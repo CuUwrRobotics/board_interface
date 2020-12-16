@@ -2,7 +2,7 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   15:41 Aug 16 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 15:34 Dec 16 2020
+ * @Last modified time: 15:53 Dec 16 2020
  */
 
 #include <stdio.h>
@@ -50,20 +50,19 @@ inline void printSeperator(std::string name, uint8_t index) {
 
 void setPwm(uint8_t id, uint8_t pin, float val, ros::Publisher &pub){
   board_interface::pwm pwm_msg;
+  pwm_msg.header.stamp = ros::Time::now();
   if (pin == 16) {
     // Set all pins
     for (uint8_t i = 0; i < 16; i++)
       pwm_msg.values[i] = val;
     pwm_msg.frequency = 0;
     pwm_msg.rw_mask = (uint16_t)0xFFFF;
-    pwm_msg.header.stamp = ros::Time::now();
     pub.publish(pwm_msg);
     return;
   }
   pwm_msg.values[pin] = val;
   pwm_msg.frequency = 0;
   pwm_msg.rw_mask = (uint16_t)0x0001 << (pin);
-  pwm_msg.header.stamp = ros::Time::now();
   pub.publish(pwm_msg);
 } // setPwm
 
@@ -139,11 +138,95 @@ bool test::pwm(uint8_t index, ros::NodeHandle n){
   return false;
 } // testPwm
 
+void setGpio(uint8_t pin, uint8_t mode, uint8_t value, ros::Publisher &pub){
+  board_interface::gpio gpio_msg;
+  gpio_msg.header.stamp = ros::Time::now();
+  if (pin == 16) {
+    // Set all pins
+    if (value == 1) {
+      gpio_msg.values = (uint16_t)0xFFFF;
+    } else {
+      gpio_msg.values = 0;
+    }
+    if (mode == 1) {
+      gpio_msg.modes = (uint16_t)0xFFFF;
+    } else {
+      gpio_msg.modes = 0;
+    }
+    gpio_msg.rw_mask = (uint16_t)0xFFFF;
+    pub.publish(gpio_msg);
+    return;
+  }
+  if (value == 1) {
+    gpio_msg.values = (uint16_t)0x0001 << (pin);
+  } else {
+    gpio_msg.values = (gpio_msg.values) & (~((uint16_t)0x0001 << (pin)));
+    gpio_msg.values = 0;
+  }
+  if (mode == 1) {
+    gpio_msg.modes = (uint16_t)0x0001 << (pin);
+  } else {
+    gpio_msg.modes = (gpio_msg.modes) & (~((uint16_t)0x0001 << (pin)));
+    gpio_msg.modes = 0;
+  }
+  gpio_msg.rw_mask = (uint16_t)0x0001 << (pin);
+  pub.publish(gpio_msg);
+} // setGpio
+
 bool test::gpio(uint8_t index){
   printSeperator("GPIO", index);
-  printf("GPIO test beginning:\n");
-
-  board_interface::gpio gpio_msg;
+  ros::Publisher pub = n.advertise <board_interface::pwm>
+                         (getTopicName("gpio", index).c_str(), 0);
+  waitForRosPublisherSubs(pub);
+  printf("GPIO test beginning.\n");
+  printf("Pin 0: mode input, off. (pin should be OFF)\n");
+  setGpio(index, 0, 0, 0, pub);
+  printf("Please verify: (y/n)");
+  std::cin >> verify;
+  if (verify != 'y') {
+    log_error_nargs("Test failed. Will not continue this cycle.");
+    return false;
+  }
+  printf("Pin 0: mode input, on. (pin should be OFF)\n");
+  setGpio(index, 0, 0, 1, pub);
+  printf("Please verify: (y/n)");
+  std::cin >> verify;
+  if (verify != 'y') {
+    log_error_nargs("Test failed. Will not continue this cycle.");
+    return false;
+  }
+  printf("Pin 0: mode output, off. (pin should be OFF)\n");
+  setGpio(index, 0, 1, 0, pub);
+  printf("Please verify: (y/n)");
+  std::cin >> verify;
+  if (verify != 'y') {
+    log_error_nargs("Test failed. Will not continue this cycle.");
+    return false;
+  }
+  printf("Pin 0: mode output, on. (pin should be ON)\n");
+  setGpio(index, 0, 1, 1, pub);
+  printf("Please verify: (y/n)");
+  std::cin >> verify;
+  if (verify != 'y') {
+    log_error_nargs("Test failed. Will not continue this cycle.");
+    return false;
+  }
+  printf("All pins ON)\n");
+  setGpio(index, 16, 1, 1, pub);
+  printf("Please verify: (y/n)");
+  std::cin >> verify;
+  if (verify != 'y') {
+    log_error_nargs("Test failed. Will not continue this cycle.");
+    return false;
+  }
+  printf("All pins OFF)\n");
+  setGpio(index, 16, 1, 0, pub);
+  printf("Please verify: (y/n)");
+  std::cin >> verify;
+  if (verify != 'y') {
+    log_error_nargs("Test failed. Will not continue this cycle.");
+    return false;
+  }
 
   return true;
 } // testGpio
