@@ -1,4 +1,11 @@
 /**
+ * @Author: Nick Steele
+ * @Date:   12:18 Dec 15 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 13:16 Feb 13 2021
+ */
+
+/**
  * Hardware configruation values
  */
 #include <stdint.h>
@@ -6,9 +13,9 @@
 /**
  * Communication addresses
  */
-const static uint8_t GPIO_0_ADDR = 0x25;
+const static uint8_t GPIO_0_ADDR = 0x27;
 const static uint8_t GPIO_1_ADDR = 0x26;
-const static uint8_t GPIO_2_ADDR = 0x27;
+const static uint8_t GPIO_2_ADDR = 0x25;
 
 const static uint8_t PWM_0_ADDR = 0x41;
 const static uint8_t PWM_1_ADDR = 0x40;
