@@ -2,7 +2,7 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   15:41 Aug 16 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 15:53 Dec 16 2020
+ * @Last modified time: 12:17 Feb 13 2021
  */
 
 #include <stdio.h>
@@ -173,14 +173,14 @@ void setGpio(uint8_t pin, uint8_t mode, uint8_t value, ros::Publisher &pub){
   pub.publish(gpio_msg);
 } // setGpio
 
-bool test::gpio(uint8_t index){
+bool test::gpio(uint8_t index, ros::NodeHandle n){
   printSeperator("GPIO", index);
-  ros::Publisher pub = n.advertise <board_interface::pwm>
+  ros::Publisher pub = n.advertise <board_interface::gpio>
                          (getTopicName("gpio", index).c_str(), 0);
   waitForRosPublisherSubs(pub);
   printf("GPIO test beginning.\n");
   printf("Pin 0: mode input, off. (pin should be OFF)\n");
-  setGpio(index, 0, 0, 0, pub);
+  setGpio(0, 0, 0, pub);
   printf("Please verify: (y/n)");
   std::cin >> verify;
   if (verify != 'y') {
@@ -188,7 +188,7 @@ bool test::gpio(uint8_t index){
     return false;
   }
   printf("Pin 0: mode input, on. (pin should be OFF)\n");
-  setGpio(index, 0, 0, 1, pub);
+  setGpio(0, 0, 1, pub);
   printf("Please verify: (y/n)");
   std::cin >> verify;
   if (verify != 'y') {
@@ -196,7 +196,7 @@ bool test::gpio(uint8_t index){
     return false;
   }
   printf("Pin 0: mode output, off. (pin should be OFF)\n");
-  setGpio(index, 0, 1, 0, pub);
+  setGpio(0, 1, 0, pub);
   printf("Please verify: (y/n)");
   std::cin >> verify;
   if (verify != 'y') {
@@ -204,7 +204,7 @@ bool test::gpio(uint8_t index){
     return false;
   }
   printf("Pin 0: mode output, on. (pin should be ON)\n");
-  setGpio(index, 0, 1, 1, pub);
+  setGpio(0, 1, 1, pub);
   printf("Please verify: (y/n)");
   std::cin >> verify;
   if (verify != 'y') {
@@ -212,7 +212,7 @@ bool test::gpio(uint8_t index){
     return false;
   }
   printf("All pins ON)\n");
-  setGpio(index, 16, 1, 1, pub);
+  setGpio(16, 1, 1, pub);
   printf("Please verify: (y/n)");
   std::cin >> verify;
   if (verify != 'y') {
@@ -220,7 +220,7 @@ bool test::gpio(uint8_t index){
     return false;
   }
   printf("All pins OFF)\n");
-  setGpio(index, 16, 1, 0, pub);
+  setGpio(16, 1, 0, pub);
   printf("Please verify: (y/n)");
   std::cin >> verify;
   if (verify != 'y') {

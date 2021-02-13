@@ -2,7 +2,7 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   10:53 Aug 15 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 18:22 Dec 15 2020
+ * @Last modified time: 11:20 Feb 13 2021
  */
 
 #include "BitTesting.h"
@@ -20,8 +20,8 @@ int main(int argc, char *argv[]) {
   if (!test::pwm(0, n)) testFailed = true;
   if (!test::pwm(1, n)) testFailed = true;
 
-  if (!test::gpio(0)) testFailed = true;
-  if (!test::gpio(1)) testFailed = true;
+  if (!test::gpio(0, n)) testFailed = true;
+  if (!test::gpio(1, n)) testFailed = true;
 
   if (!test::power(0)) testFailed = true;
   if (!test::power(1)) testFailed = true;

@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   9:08 Aug 15 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:22 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 18:08 Feb 13 2021
  */
 
 // Handler for hardware devices.
@@ -116,10 +116,8 @@ bool Device::setPinModes(PinBus pinBus) {
   // For each pin:
   // -> assign pins
   for (uint8_t i = 0; i < pinBus.getPinCount(); i++) { // for each pin
-    if (currentPinBus.getPinMode(pinBus.getPin(i)) != pinBus.getPinMode(i)) {
-      requestedPinBus.setPinMode(pinBus.getPin(i), pinBus.getPinMode(i));
-      pinModeChangePending = true;
-    }
+    requestedPinBus.setPinMode(pinBus.getPin(i), pinBus.getPinMode(i));
+    pinModeChangePending = true;
   }
   return true;
 } // setPinModes
@@ -136,15 +134,10 @@ bool Device::setPinMode(uint8_t pinNumber, PinMode_t pinMode) {
     printf("%s DEVICE -> ERROR: bad pin mode\n", getHardwareName());
     return false;
   }
-  // Pins are all within range and available, so assign control
-  // For each pin:
-  // -> assign pins
-  // for (uint8_t i = 0; i < pinNumbersLength; i++) { // for each pin
-  if (currentPinBus.getPinMode(pinNumber) != pinMode) {
+  if (requestedPinBus.getPinMode(pinNumber) != pinMode) {
     requestedPinBus.setPinMode(pinNumber, pinMode);
     pinModeChangePending = true;
   }
-  // }
   return true;
 } // setPinModes
 

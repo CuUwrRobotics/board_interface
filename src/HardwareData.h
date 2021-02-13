@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   16:38 Aug 12 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:22 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 17:52 Feb 13 2021
  */
 
 #ifndef HARDWARE_DATA_H
@@ -23,6 +23,8 @@ enum DataValueFormat_t {VALUE_INVALID_, /*< Default if data never gets set. */
                         // GPIO
                         // ====
                         VALUE_GPIO_STATE,
+                        VALUE_GPIO_MODE, // 0: Input, 1: output
+                        VALUE_GPIO_PUPD, // 0: Neither, 1: Pull-up, 2: pull down.
                         // ADC
                         // ===
                         VALUE_ADC_DIRECT, /*< Direct data from the ADC. Supported by any ADC based

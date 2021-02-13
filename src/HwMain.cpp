@@ -2,7 +2,7 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   13:37 Sep 05 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 13:36 Dec 16 2020
+ * @Last modified time: 13:51 Feb 13 2021
  */
 
 /**
@@ -753,6 +753,19 @@ void createPublishersAndSubscribers(ros::NodeHandle nd){
       case PUB_GPIO:
         publishers[pub] =
           nd.advertise <board_interface::gpio> (topic_name.c_str(), 0);
+        if (pub.index == 0)
+          subscribers[pub] = nd.subscribe(pub.getTopicName(true).c_str(),
+                                          0,
+                                          callbacks::gpio0);
+        if (pub.index == 1)
+          subscribers[pub] = nd.subscribe(pub.getTopicName(true).c_str(),
+                                          0,
+                                          callbacks::gpio1);
+        if (pub.index == 2)
+          subscribers[pub] = nd.subscribe(pub.getTopicName(true).c_str(),
+                                          0,
+                                          callbacks::gpio2);
+        printf("\tSubscription topic: %s\n", pub.getTopicName(true).c_str());
         break;
       case PUB_PWM:
         publishers[pub] =

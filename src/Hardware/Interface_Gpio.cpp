@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   16:38 Aug 12 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:24 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 17:59 Feb 13 2021
  */
 
 #include "Interface_Gpio.h"
@@ -71,6 +71,16 @@ DataError_t Interface_Gpio::writePin(PinValue_t *valueIn) {
   case VALUE_GPIO_STATE:
     val.fmt = VALUE_GPIO_STATE; // Set format
     return commDevice->setPinValue(&val); // Set the data
+    break;
+  case VALUE_GPIO_PUPD:
+    val.fmt = VALUE_GPIO_PUPD;
+    return commDevice->setPinValue(&val);
+    break;
+  case VALUE_GPIO_MODE:
+    val.fmt = VALUE_GPIO_MODE;
+    commDevice->setPinMode(val.pin,
+                           (val.data[0] > 0.5)?MODE_OUTPUT:MODE_INPUT);
+    return ERROR_SUCCESS;
     break;
   default:
     return ERROR_NOT_AVAIL;

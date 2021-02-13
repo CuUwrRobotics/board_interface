@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   9:08 Aug 15 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:25 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 18:22 Feb 13 2021
  */
 
 /* This class is a tempalte for copy/pasting to actual class files. It is
@@ -46,9 +46,12 @@
  */
 
 bool Device_Gpio_Mcp23017::deviceInit(){
-  // Init chip here
+  Wire.begin();
 
-  // Default modes and states assigned here
+  writeTwoRegisters(0x0000, MCP23017_IODIRA); // Output
+  writeTwoRegisters(0x0000, MCP23017_GPIOA); // all off
+  writeTwoRegisters(0xFFFF, MCP23017_IODIRA); // Input
+  writeTwoRegisters(0x0000, MCP23017_GPPUA); // no pull up
 
   pinModeChangePending = true;
   writeDataPending = true;
@@ -97,8 +100,8 @@ DataError_t Device_Gpio_Mcp23017::getPinValue(PinValue_t *value){
 
 DataError_t Device_Gpio_Mcp23017::setPinValue(PinValue_t *value) {
   // If pin is not writable, don't set it.
-  if (pinIsReadable(value->pin))
-    return ERROR_WROTE_INPUT;
+  // if (pinIsReadable(value->pin))
+  //   return ERROR_WROTE_INPUT;
   if (!(value->pin >= 0 && value->pin < PIN_COUNT))
     return ERROR_DEV_PIN_INVALID;
 
@@ -108,6 +111,16 @@ DataError_t Device_Gpio_Mcp23017::setPinValue(PinValue_t *value) {
     else // clear bit
       requestedPinValues &= ~(0x0001 << value->pin);
     writeDataPending = true;
+    return ERROR_SUCCESS;
+  } else if (value->fmt == VALUE_GPIO_PUPD) {
+    if (value->data[0] == 0) // No PU or PD
+      pupd |= (0x0001 << value->pin);
+    else if (value->data[0] == 1) // Pull up
+      pupd &= ~(0x0001 << value->pin);
+    else
+      log_error("Invalid pull-up/pull-down value recieved: %d\n",
+                (uint8_t)value->data[0]);
+    pinModeChangePending = true;
     return ERROR_SUCCESS;
   }
   return ERROR_NOT_AVAIL;
@@ -121,12 +134,51 @@ DataError_t Device_Gpio_Mcp23017::readDeviceConfig(DeviceConfig_t *cfg) {
   return ERROR_NOT_AVAIL;
 } // readDeviceConfig
 
+void Device_Gpio_Mcp23017::writeTwoRegisters(uint16_t two_bytes, uint8_t
+                                             first_register){
+  Wire.beginTransmission(this->address);
+  Wire.write(first_register);
+  Wire.write((uint8_t)(two_bytes & 0xFF));
+  Wire.write((uint8_t)(two_bytes >> 8));
+  Wire.endTransmission();
+} // Device_Gpio_Mcp23017::writeTwoRegisters
+
 bool Device_Gpio_Mcp23017::updateData(){
   if (!ready())
     return false;
 
   if (!simulate_io) {
-    log_info("%s updating (TODO).", HARDWARE_NAME);
+    if (pinModeChangePending) {
+      uint16_t modes = 0;
+      for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+        modes |= (requestedPinBus.getPinMode(pin) == MODE_INPUT) << pin;
+        currentPinBus.setPinMode(pin, requestedPinBus.getPinMode(pin));
+      }
+      writeTwoRegisters(modes, MCP23017_IODIRA);
+      writeTwoRegisters(pupd, MCP23017_GPPUA);
+      pinModeChangePending = false;
+    }
+
+    if (writeDataPending) {
+      writeTwoRegisters(requestedPinValues, MCP23017_GPIOA);
+      writeDataPending = false;
+      // currentPinValues will be updated in the read later
+    }
+
+    { // Read data
+      uint16_t ba = 0;
+      uint8_t a;
+      // read the current GPIO output latches
+      Wire.beginTransmission(this->address);
+      Wire.write((uint8_t)MCP23017_GPIOA);
+      Wire.endTransmission();
+      Wire.requestFrom(this->address, 2);
+      a = Wire.read();
+      ba = Wire.read();
+      ba <<= 8;
+      ba |= a;
+      currentPinValues = ba; // Accounts for currently high output pins
+    }
     return true;
   } else {
     // Check if any pins need their modes changed

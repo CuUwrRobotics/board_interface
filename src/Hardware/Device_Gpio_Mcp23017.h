@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   16:38 Aug 12 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:25 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 17:56 Feb 13 2021
  */
 
 // Header file exclusive to the the MCP23017 GPIO controller and it's communications.
@@ -19,6 +19,8 @@
 #include "Device.h"
 // #include "Interface.h"
 #include "Logger.h"
+
+#include "arduino_port_lib/Ardu_Wire.h" // Arduino Wire (I2C)
 
 // GPIO specific pin states
 const uint8_t MCP23017_PIN_ON = 0x01;
@@ -90,6 +92,7 @@ private:
 // No pin values for GPIO, only HIGH/LOW, so each bit is one pin.
   uint16_t currentPinValues;
   uint16_t requestedPinValues;
+  uint16_t pupd; // Pullup/down
 
 /* These give the base Device class access to the above local variables. They
  * don't need any modification. See more info about each function in the Device
@@ -128,6 +131,15 @@ private:
 
 /* These actually drive the chip, and must be different for each device subclass.
  ******************************************************************************/
+
+  /**
+   * Writes to two registers, starting wit hte given frist register, and overrunning
+   * into the next.
+   * @param two_bytes: A uint16_t containing the two bytes to write; Right 8 are written first.
+   * @param first_register: Register address to start writing at.
+   */
+  inline void writeTwoRegisters(uint16_t two_bytes,
+                                uint8_t first_register);
 
 /**
  * deviceInit is called by Device::init() just before completion. It should at

@@ -2,7 +2,7 @@
  * @Author: Nick Steele <nichlock>
  * @Date:   10:54 Aug 15 2020
  * @Last modified by:   Nick Steele
- * @Last modified time: 17:22 Dec 15 2020
+ * @Last modified time: 11:31 Feb 13 2021
  */
 
 #ifndef BIT_TESTING_H
@@ -18,7 +18,7 @@
 namespace test {
 bool pwm(uint8_t index, ros::NodeHandle n);
 
-bool gpio(uint8_t index);
+bool gpio(uint8_t index, ros::NodeHandle n);
 
 bool power(uint8_t index);
 
