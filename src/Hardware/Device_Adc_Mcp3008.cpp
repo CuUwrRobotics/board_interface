@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   9:08 Aug 15 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:25 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 22:06 Feb 13 2021
  */
 
 #include "Hardware/Device_Adc_Mcp3008.h"
@@ -105,7 +105,9 @@ bool Device_Adc_Mcp3008::updateData(){
     return false;
   // Real hardware should be used
   if (!simulate_io) {
-    log_info("%s updating (TODO).", HARDWARE_NAME);
+    for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
+      pinValues[pin] = readADC(pin);
+    }
     return true;
   }	else { // Only uses simulated hardware, no connections
     for (uint8_t pin = 0; pin < PIN_COUNT; pin++) {
@@ -126,3 +128,30 @@ bool Device_Adc_Mcp3008::updateData(){
     return true;
   }
 } // updateData
+
+// Non-differential and start bit included
+const static uint8_t kMcp3008_default_command = (0x01 << 7) | (0x01 << 6);
+
+uint16_t Device_Adc_Mcp3008::readADC(uint8_t pin) {
+  static uint8_t command, b0, b1, b2;
+
+  command = (kMcp3008_default_command | ((pin & 0x07) << 3));
+
+  SPI.beginTransaction(
+    SPISettings(MCP3008_SPI_MAX,
+                MCP3008_SPI_ORDER,
+                MCP3008_SPI_MODE,
+                false,
+                this->address
+                ));
+  // digitalWrite(cs, LOW);
+
+  b0 = SPI.transfer(command, false);
+  b1 = SPI.transfer(0x00, false);
+  b2 = SPI.transfer(0x00, true);
+
+  // digitalWrite(cs, HIGH);
+  SPI.endTransaction();
+
+  return 0x3FF & ((b0 & 0x01) << 9 | (b1 & 0xFF) << 1 | (b2 & 0x80) >> 7);
+} // Adafruit_MCP3008::SPIxADC

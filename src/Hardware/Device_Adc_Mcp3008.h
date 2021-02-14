@@ -1,8 +1,8 @@
 /**
  * @Author: Nick Steele <nichlock>
  * @Date:   16:38 Aug 12 2020
- * @Last modified by:   nichlock
- * @Last modified time: 19:25 Sep 19 2020
+ * @Last modified by:   Nick Steele
+ * @Last modified time: 21:29 Feb 13 2021
  */
 
 #ifndef DEVICE_ADC_MCP3008_H
@@ -17,6 +17,14 @@
 #include "Device.h"
 // #include "Interface.h"
 #include "Logger.h"
+
+#include "arduino_port_lib/Ardu_SPI.h" // Arduino Wire (I2C)
+
+#define MCP3008_SPI_MAX_5V 3600000 ///< SPI MAX Value on 5V pin
+#define MCP3008_SPI_MAX_3V 1350000 ///< SPI MAX Value on 3V pin
+#define MCP3008_SPI_MAX MCP3008_SPI_MAX_5V
+#define MCP3008_SPI_ORDER MSBFIRST // These are defined in 'arduino'-like SPI wrapper class
+#define MCP3008_SPI_MODE SPI_MODE0
 
 // Total steps for the ADC = 2^(bitwidth)
 const float ADC_STEPS = 1024;
@@ -96,6 +104,8 @@ inline char *getHardwareName(){
 
 /* These actually drive the chip, and must be different for each device subclass.
  ******************************************************************************/
+
+uint16_t readADC(uint8_t pin);
 
 /**
  * deviceInit is called by Device::init() just before completion. It should at
